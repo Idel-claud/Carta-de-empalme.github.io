@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1e66d0"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><title>Cartas de empalme FTTH</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{--bg:#f3f5f8;--pn:#fff;--tx:#1c2430;--mu:#6a7686;--bd:#d6dce5;--ac:#1e66d0}
+@media(prefers-color-scheme:dark){:root{--bg:#14181f;--pn:#1d232d;--tx:#e6ebf2;--mu:#98a3b3;--bd:#323b49;--ac:#5b9bff}}
+*{box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;display:flex;flex-direction:column}
+header{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 12px;background:var(--pn);border-bottom:1px solid var(--bd)}
+header h1{font-size:15px;margin:0 10px 0 0}
+button,select,input,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:5px 8px}
+button{cursor:pointer}button:hover{border-color:var(--ac)}button.p{background:var(--ac);color:#fff;border-color:var(--ac)}button.d{color:#d33}
+main{flex:1;display:flex;min-height:0}
+#cv{flex:1;position:relative;overflow:hidden;background:var(--bg)}svg#sv{width:100%;height:100%;cursor:grab;touch-action:none}
+aside{width:340px;max-width:100%;background:var(--pn);border-left:1px solid var(--bd);overflow:auto;padding:12px}
+aside h3{margin:12px 0 6px;font-size:13px;text-transform:uppercase;color:var(--mu);letter-spacing:.04em}
+label{display:block;font-size:12px;color:var(--mu);margin-top:6px}aside input,aside select,aside textarea{width:100%}
+.br{border:1px solid var(--bd);border-radius:8px;padding:8px;margin:8px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sw{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;border:1px solid #0004}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:6px 12px;background:var(--pn);border-bottom:1px solid var(--bd)}
+.meta label{margin:0}.meta input{width:100%}
+@media(max-width:800px){main{flex-direction:column}aside{width:100%;height:45%;border-left:0;border-top:1px solid var(--bd)}.meta{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<header><h1>📡 Cartas de empalme FTTH</h1>
+<button onclick="addRoot()">+ Nodo</button><button onclick="fit()">Ajustar vista</button>
+<button onclick="saveJ()">Guardar JSON</button><button onclick="$('fj').click()">Cargar JSON</button><button onclick="$('fc').click()">Importar CSV</button>
+<button onclick="if(confirm('¿Restaurar el ejemplo?')){load(example());}">Ejemplo</button>
+<button id="inst" class="p" hidden>⬇ Instalar app</button><button class="p" onclick="pdf()">Exportar PDF</button>
+<input id="fj" type="file" accept=".json" hidden onchange="rd(this,t=>load(JSON.parse(t)))"><input id="fc" type="file" accept=".csv,.txt" hidden onchange="rd(this,csv)"></header>
+<div class="meta"><div><label>Título</label><input id="mt" oninput="S.title=this.value"></div><div><label>Zona / esquema</label><input id="mz" oninput="S.zone=this.value"></div><div><label>Fecha</label><input id="md" oninput="S.date=this.value"></div><div><label>Resumen</label><input id="ms" oninput="S.summary=this.value"></div></div>
+<main><div id="cv"><svg id="sv"><g id="g"></g></svg></div><aside id="pn"></aside></main>
+<script>
+const $=i=>document.getElementById(i);
+const COL={rojo:'#e53935',verde:'#43a047',violeta:'#8e24aa',rosa:'#ec6ea8',turquesa:'#1fb5ad',azul:'#1e66d0',amarillo:'#f2c200',naranja:'#fb8c00',marrón:'#795548',gris:'#8a8f98',blanco:'#cfd3d8',negro:'#222'};
+const LOGO=null; // Para tu logo: pega aquí un dataURL PNG ('data:image/png;base64,...')
+let S,sel=null,V={k:1,x:0,y:0},seq=1;
+const uid=()=>'n'+(seq++)+Math.random().toString(36).slice(2,5);
+const gn=id=>S.nodes.find(n=>n.id===id);
+const classify=c=>/e/i.test(c)?'Empalme':/^\d{6}$/.test(c)?'CTO':'Empalme';
+const tp=n=>n.typeSel&&n.typeSel!=='auto'?n.typeSel:classify(n.code);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function node(code,o={}){return {id:uid(),code,typeSel:'auto',label:'',cableIn:'',cableOut:'',notes:'',...o}}
+function br(from,to,port,fiber,color,status,notes){return {id:uid(),from,to,port,fiber:fiber||'',color:color||'',status:status||port,notes:notes||''}}
+function example(){
+ const r=node('01E0486',{label:'H8.1',cableIn:'96f',cableOut:'48f',notes:'Empalme principal'});
+ const e=node('01E0358',{cableIn:'24f',cableOut:'12f'});
+ const c=['269147','269272','269273','269271','269276','269277','269637','269274'].map(x=>node(x));
+ const B=[br(r.id,c[0].id,'OUT1','12f','rojo'),br(r.id,c[1].id,'OUT2','12f','verde'),br(r.id,e.id,'OUT3','24f','violeta'),
+ br(e.id,c[2].id,'IN S06','12f','rosa'),br(e.id,c[3].id,'IN S12','12f','turquesa'),br(e.id,c[4].id,'IN S03','12f','rojo'),br(e.id,c[5].id,'IN S04','12f','verde'),
+ br(r.id,c[6].id,'OUT4','12f','rosa'),br(r.id,c[7].id,'OUT5','12f','turquesa'),br(r.id,null,'OUT6','','','LIBRE')];
+ return {title:'Carta de empalme',zone:'H8.1',date:new Date().toLocaleDateString('es-ES'),summary:'Empalme principal con 6 salidas, 1 sub-empalme y 8 CTOs.',root:r.id,nodes:[r,e,...c],branches:B};
+}
+function load(d){S=d;sel=S.root;['t','z','d','s'].forEach(k=>$('m'+k).value=S[{t:'title',z:'zone',d:'date',s:'summary'}[k]]||'');panel();draw();setTimeout(fit,30)}
+// ---- layout
+function layout(){
+ const ch={};S.branches.forEach(b=>(ch[b.from]=ch[b.from]||[]).push(b));
+ const pos={},stubs=[],seen=new Set();let y=0;
+ function go(id,d){seen.add(id);const ks=ch[id]||[],ys=[];
+  ks.forEach(b=>{if(b.to&&gn(b.to)&&!seen.has(b.to)){go(b.to,d+1);ys.push(pos[b.to].y)}else{stubs.push({b,x:d+1,y});ys.push(y);y++}});
+  if(!ks.length){pos[id]={x:d,y};y++}else pos[id]={x:d,y:ys.reduce((a,c)=>a+c,0)/ys.length}}
+ if(gn(S.root))go(S.root,0);S.nodes.forEach(n=>{if(!seen.has(n.id))go(n.id,0)});
+ return {pos,stubs};
+}
+const X=x=>40+x*280,Y=y=>50+y*76,NW=160,NH=50;
+function build(pdf){
+ const {pos,stubs}=layout();let h='',mx=0,my=0;const out=[];
+ const col=b=>COL[b.color]||'#8a8f98';
+ const edge=(x1,y1,x2,y2,b,dash)=>{const m=(x1+x2)/2;
+  out.push(`<path d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}" fill="none" stroke="${col(b)}" stroke-width="3" ${dash?'stroke-dasharray="6 4"':''}/>`+
+  `<text x="${m}" y="${(y1+y2)/2-6}" font-size="11" text-anchor="middle" fill="#445" font-family="Arial">${esc(b.port)}${b.fiber?' · '+esc(b.fiber):''}</text>`)};
+ S.branches.forEach(b=>{const p=pos[b.from];if(!p)return;const q=b.to&&pos[b.to];
+  if(q&&gn(b.to))edge(X(p.x)+NW,Y(p.y)+NH/2,X(q.x),Y(q.y)+NH/2,b);});
+ stubs.forEach(s=>{const p=pos[s.b.from];edge(X(p.x)+NW,Y(p.y)+NH/2,X(s.x),Y(s.y)+NH/2,s.b,true);
+  out.push(`<rect x="${X(s.x)}" y="${Y(s.y)+10}" width="90" height="30" rx="15" fill="#fff" stroke="#8a8f98" stroke-dasharray="4 3"/><text x="${X(s.x)+45}" y="${Y(s.y)+29}" font-size="11" text-anchor="middle" fill="#667" font-family="Arial">${esc(s.b.status||'LIBRE')}</text>`);
+  mx=Math.max(mx,X(s.x)+90);my=Math.max(my,Y(s.y)+NH)});
+ S.nodes.forEach(n=>{const p=pos[n.id];if(!p)return;const e=tp(n)==='Empalme',f=e?'#dbe8ff':'#dcf3e2',s=e?'#1e66d0':'#2e8b4a';
+  const on=!pdf&&sel===n.id;
+  out.push(`<g data-n="${n.id}" style="cursor:pointer"><rect x="${X(p.x)}" y="${Y(p.y)}" width="${NW}" height="${NH}" rx="8" fill="${f}" stroke="${on?'#f2a900':s}" stroke-width="${on?4:2}"/>`+
+  `<text x="${X(p.x)+10}" y="${Y(p.y)+21}" font-size="14" font-weight="bold" fill="#14202e" font-family="Arial">${esc(n.code)}${n.id===S.root?' ★':''}</text>`+
+  `<text x="${X(p.x)+10}" y="${Y(p.y)+39}" font-size="11" fill="#445" font-family="Arial">${tp(n)}${n.label?' · '+esc(n.label):''}</text></g>`);
+  mx=Math.max(mx,X(p.x)+NW);my=Math.max(my,Y(p.y)+NH)});
+ return {html:out.join(''),w:mx+40,h:my+40,pos};
+}
+function draw(){$('g').innerHTML=build().html;ap()}
+const ap=()=>$('g').setAttribute('transform',`translate(${V.x},${V.y}) scale(${V.k})`);
+function fit(){const {w,h}=build(),c=$('cv');V.k=Math.min(c.clientWidth/w,c.clientHeight/h,1.2);V.x=(c.clientWidth-w*V.k)/2;V.y=(c.clientHeight-h*V.k)/2;ap()}
+const sv=$('sv');let drag=null;
+sv.addEventListener('wheel',e=>{e.preventDefault();const r=sv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,k=Math.min(4,Math.max(.15,V.k*(e.deltaY<0?1.12:.89)));
+ V.x=mx-(mx-V.x)*k/V.k;V.y=my-(my-V.y)*k/V.k;V.k=k;ap()},{passive:false});
+sv.addEventListener('pointerdown',e=>{const n=e.target.closest('[data-n]');if(n){sel=n.dataset.n;panel();draw();return}drag={x:e.clientX-V.x,y:e.clientY-V.y};sv.setPointerCapture(e.pointerId)});
+sv.addEventListener('pointermove',e=>{if(drag){V.x=e.clientX-drag.x;V.y=e.clientY-drag.y;ap()}});
+sv.addEventListener('pointerup',()=>drag=null);
+// ---- panel
+function panel(){
+ const n=gn(sel),p=$('pn');if(!n){p.innerHTML='<p style="color:var(--mu)">Selecciona un nodo o pulsa «+ Nodo».</p>';return}
+ const bs=S.branches.filter(b=>b.from===n.id);
+ const opts=(v)=>`<option value="">— LIBRE (terminal) —</option>`+S.nodes.filter(x=>x.id!==n.id).map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.code)}</option>`).join('');
+ const cols=v=>`<option value=""></option>`+Object.keys(COL).map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('');
+ p.innerHTML=`<h3>Nodo</h3><label>Código</label><input value="${esc(n.code)}" oninput="setN('code',this.value)">
+ <div class="g2"><div><label>Tipo (auto: ${classify(n.code)})</label><select onchange="setN('typeSel',this.value);panel()">${['auto','Empalme','CTO'].map(t=>`<option ${t===n.typeSel?'selected':''}>${t}</option>`).join('')}</select></div>
+ <div><label>Cabecera / zona</label><input value="${esc(n.label)}" oninput="setN('label',this.value)"></div></div>
+ <div class="g2"><div><label>Cable entrada</label><input value="${esc(n.cableIn)}" oninput="setN('cableIn',this.value)"></div><div><label>Cable salida</label><input value="${esc(n.cableOut)}" oninput="setN('cableOut',this.value)"></div></div>
+ <label>Observaciones</label><textarea rows="2" oninput="setN('notes',this.value)">${esc(n.notes)}</textarea>
+ <div class="row"><button onclick="addChild()">+ Hijo</button><button onclick="addBr()">+ Rama</button><button onclick="dup()">Duplicar</button><button onclick="S.root='${n.id}';draw();panel()">★ Raíz</button><button class="d" onclick="delN()">Eliminar</button></div>
+ <h3>Ramas de salida (${bs.length})</h3>`+bs.map(b=>`<div class="br"><div class="g2"><div><label>Salida / puerto</label><input value="${esc(b.port)}" oninput="setB('${b.id}','port',this.value)"></div>
+ <div><label>Destino</label><select onchange="setB('${b.id}','to',this.value||null)">${opts(b.to)}</select></div>
+ <div><label>Fibra</label><input list="fl" value="${esc(b.fiber)}" oninput="setB('${b.id}','fiber',this.value)"></div>
+ <div><label>Color <span class="sw" style="background:${COL[b.color]||'transparent'}"></span></label><select onchange="setB('${b.id}','color',this.value);panel()">${cols(b.color)}</select></div></div>
+ <label>Estado / etiqueta</label><input value="${esc(b.status)}" oninput="setB('${b.id}','status',this.value)"><label>Notas</label><input value="${esc(b.notes)}" oninput="setB('${b.id}','notes',this.value)">
+ <div class="row"><button class="d" onclick="delB('${b.id}')">Quitar rama</button></div></div>`).join('')+
+ `<datalist id="fl"><option>12f<option>24f<option>48f<option>96f</datalist>`;
+}
+function setN(k,v){const n=gn(sel);n[k]=v;draw()}
+function setB(id,k,v){S.branches.find(b=>b.id===id)[k]=v;draw()}
+function addRoot(){const n=node('NUEVO');S.nodes.push(n);sel=n.id;panel();draw()}
+function addBr(){S.branches.push(br(sel,null,'OUT'+(S.branches.filter(b=>b.from===sel).length+1)));panel();draw()}
+function addChild(){const n=node('NUEVO');S.nodes.push(n);S.branches.push(br(sel,n.id,'OUT'+(S.branches.filter(b=>b.from===sel).length+1)));sel=n.id;panel();draw()}
+function dup(){const o=gn(sel),n={...o,id:uid(),code:o.code+'-copia'};S.nodes.push(n);sel=n.id;panel();draw()}
+function delB(id){S.branches=S.branches.filter(b=>b.id!==id);panel();draw()}
+function delN(){if(sel===S.root&&S.nodes.length>1&&!confirm('Es el nodo raíz. ¿Eliminar?'))return;
+ S.branches=S.branches.filter(b=>b.from!==sel);S.branches.forEach(b=>{if(b.to===sel)b.to=null});S.nodes=S.nodes.filter(n=>n.id!==sel);
+ if(S.root===sel)S.root=S.nodes[0]?.id;sel=S.root;panel();draw()}
+// ---- JSON / CSV
+function saveJ(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download=(S.zone||'carta')+'.json';a.click()}
+function rd(i,f){const r=new FileReader();r.onload=()=>{try{f(r.result)}catch(e){alert('Error: '+e.message)}i.value=''};r.readAsText(i.files[0])}
+function csv(t){ // columnas: origen,salida,destino,fibra,color,estado,notas
+ const L=t.trim().split(/\r?\n/).map(l=>l.split(/[;,]/).map(x=>x.trim()));if(/orig/i.test(L[0][0]))L.shift();
+ const M={};const get=c=>M[c]||(M[c]=node(c));const d={title:'Importado CSV',zone:'',date:new Date().toLocaleDateString('es-ES'),summary:'',nodes:[],branches:[]};
+ L.forEach(r=>{if(!r[0])return;const a=get(r[0]);const b=r[2]&&!/libre/i.test(r[2])?get(r[2]):null;d.branches.push(br(a.id,b&&b.id,r[1]||'',r[3],r[4],r[5]||r[1],r[6]))});
+ d.nodes=Object.values(M);if(!d.nodes.length)throw new Error('CSV vacío');const tos=new Set(d.branches.map(b=>b.to));d.root=(d.nodes.find(n=>!tos.has(n.id))||d.nodes[0]).id;load(d)}
+// ---- PDF
+async function pdf(){
+ const {jsPDF}=window.jspdf,d=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+ d.setFontSize(18);d.text(S.title||'Carta de empalme',14,16);d.setFontSize(10);
+ const r=gn(S.root);d.text(`Fecha: ${S.date||''}    Zona/esquema: ${S.zone||''}    Raíz: ${r?r.code+' ('+tp(r)+')':'-'}`,14,23);
+ const nE=S.nodes.filter(n=>tp(n)==='Empalme').length,nC=S.nodes.length-nE;
+ d.text(d.splitTextToSize(`${S.summary||''}  [${nE} empalmes, ${nC} CTOs, ${S.branches.length} ramas]`,265),14,29);
+ if(LOGO)d.addImage(LOGO,'PNG',250,6,35,14);
+ const {html,w,h,pos}=build(true);
+ const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="100%" height="100%" fill="#fff"/>${html}</svg>`;
+ const img=new Image();await new Promise((ok,ko)=>{img.onload=ok;img.onerror=ko;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
+ const c=document.createElement('canvas');c.width=w*2;c.height=h*2;const x=c.getContext('2d');x.scale(2,2);x.drawImage(img,0,0,w,h);
+ const mw=269,mh=150,k=Math.min(mw/w,mh/h);d.addImage(c.toDataURL('image/png'),'PNG',14,38,w*k,h*k);
+ d.addPage();d.setFontSize(13);d.text('Inventario de elementos',14,14);
+ d.autoTable({startY:18,head:[['Código','Tipo','Nivel','Cabecera/zona','Cable entrada','Cable salida','Nº salidas','Observaciones']],
+  body:S.nodes.map(n=>[n.code,tp(n),(pos[n.id]?.x??0)+1,n.label,n.cableIn,n.cableOut,S.branches.filter(b=>b.from===n.id).length,n.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]}});
+ const nm=id=>id?gn(id)?.code:'LIBRE';
+ d.setFontSize(13);d.text('Inventario de cables / ramas',14,d.lastAutoTable.finalY+10);
+ d.autoTable({startY:d.lastAutoTable.finalY+14,head:[['Origen','Salida/puerto','Destino','Fibra','Color','Estado','Notas']],
+  body:S.branches.map(b=>[nm(b.from),b.port,nm(b.to),b.fiber,b.color,b.status,b.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]},
+  didParseCell:q=>{if(q.section==='body'&&q.column.index===4&&COL[q.cell.raw]){q.cell.styles.fillColor=COL[q.cell.raw];q.cell.styles.textColor=['amarillo','blanco'].includes(q.cell.raw)?0:255}}});
+ const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFontSize(8);d.text(`${S.zone||''} · página ${i}/${n}`,14,203)}
+ d.save((S.zone||'carta')+'_empalme.pdf');
+}
+load(example());addEventListener('resize',fit);
+let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('inst').hidden=false});
+$('inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('inst').hidden=true};
+addEventListener('appinstalled',()=>$('inst').hidden=true);
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script></body></html>
