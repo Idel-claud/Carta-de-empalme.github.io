@@ -64,10 +64,9 @@ function layout(){
  function go(id,d){seen.add(id);const ks=ch[id]||[],ys=[];
   ks.forEach(b=>{if(b.to&&gn(b.to)&&!seen.has(b.to)){go(b.to,d+1);ys.push(pos[b.to].y)}else{stubs.push({b,x:d+1,y});ys.push(y);y++}});
   if(!ks.length){pos[id]={x:d,y};y++}else pos[id]={x:d,y:ys.reduce((a,c)=>a+c,0)/ys.length}}
- const feeders=()=>{let c=true;while(c){c=false;S.branches.forEach(b=>{if(!seen.has(b.from)&&gn(b.from)&&pos[b.to]){seen.add(b.from);pos[b.from]={x:pos[b.to].x-1,y:pos[b.to].y};c=true}})}};
- if(gn(S.root))go(S.root,0);feeders();
- S.nodes.forEach(n=>{if(!seen.has(n.id)){go(n.id,0);feeders()}});
- const mn=Math.min(0,...Object.values(pos).map(p=>p.x));if(mn<0){Object.values(pos).forEach(p=>p.x-=mn);stubs.forEach(s=>s.x-=mn)}
+ const top=id=>{let c=id,g=0;while(g++<300){const b=S.branches.find(x=>x.to===c&&x.from!==c&&gn(x.from));if(!b)break;c=b.from}return c};
+ if(gn(S.root))go(top(S.root),0);
+ S.nodes.forEach(n=>{if(!seen.has(n.id)){const t=top(n.id);go(seen.has(t)?n.id:t,0)}});
  return {pos,stubs};
 }
 const X=x=>40+x*280,Y=y=>50+y*76,NW=160,NH=50;
@@ -149,7 +148,9 @@ async function pdf(){
  const nE=S.nodes.filter(n=>tp(n)==='Empalme').length,nC=S.nodes.length-nE;
  d.text(d.splitTextToSize(`${S.summary||''}  [${nE} empalmes, ${nC} CTOs, ${S.branches.length} ramas]`,265),14,29);
  if(LOGO)d.addImage(LOGO,'PNG',250,6,35,14);
- const {html,w,h,pos}=build(true);const rx=pos[S.root]?pos[S.root].x:0,lv=id=>{const x=pos[id]&&pos[id].x;return x==null?'':x<rx?'Alim. '+(rx-x):x-rx+1};
+ const {html,w,h,pos}=build(true);const anc=[];let cc=S.root;for(;;){const bb=S.branches.find(x=>x.to===cc&&gn(x.from)&&x.from!==S.root&&!anc.includes(x.from));if(!bb)break;anc.push(bb.from);cc=bb.from}
+ const dsc={[S.root]:1};for(let ch=true;ch;){ch=false;S.branches.forEach(x=>{if(dsc[x.from]&&x.to&&!dsc[x.to]){dsc[x.to]=dsc[x.from]+1;ch=true}})}
+ const lv=id=>dsc[id]||(anc.includes(id)?'Alim. '+(anc.indexOf(id)+1):'Rama alim.');
  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="100%" height="100%" fill="#fff"/>${html}</svg>`;
  const img=new Image();await new Promise((ok,ko)=>{img.onload=ok;img.onerror=ko;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
  const c=document.createElement('canvas');c.width=w*2;c.height=h*2;const x=c.getContext('2d');x.scale(2,2);x.drawImage(img,0,0,w,h);
