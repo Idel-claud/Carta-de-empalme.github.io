@@ -18,7 +18,7 @@ aside h3{margin:12px 0 6px;font-size:13px;text-transform:uppercase;color:var(--m
 label{display:block;font-size:12px;color:var(--mu);margin-top:6px}aside input,aside select,aside textarea{width:100%}
 .br{border:1px solid var(--bd);border-radius:8px;padding:8px;margin:8px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .sw{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;border:1px solid #0004}
-.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.meta{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:6px 12px;background:var(--pn);border-bottom:1px solid var(--bd)}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.meta{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;padding:6px 12px;background:var(--pn);border-bottom:1px solid var(--bd)}
 .meta label{margin:0}.meta input{width:100%}
 @media(max-width:800px){main{flex-direction:column}aside{width:100%;height:45%;border-left:0;border-top:1px solid var(--bd)}.meta{grid-template-columns:1fr 1fr}}
 </style></head><body>
@@ -28,11 +28,15 @@ label{display:block;font-size:12px;color:var(--mu);margin-top:6px}aside input,as
 <button onclick="if(confirm('¿Restaurar el ejemplo?')){load(example());}">Ejemplo</button>
 <button id="inst" class="p" hidden>⬇ Instalar app</button><button class="p" onclick="pdf()">Exportar PDF</button>
 <input id="fj" type="file" accept=".json" hidden onchange="rd(this,t=>load(JSON.parse(t)))"><input id="fc" type="file" accept=".csv,.txt" hidden onchange="rd(this,csv)"></header>
-<div class="meta"><div><label>Título</label><input id="mt" oninput="S.title=this.value"></div><div><label>Zona / esquema</label><input id="mz" oninput="S.zone=this.value"></div><div><label>Fecha</label><input id="md" oninput="S.date=this.value"></div><div><label>Resumen</label><input id="ms" oninput="S.summary=this.value"></div></div>
+<div class="meta"><div><label>Título</label><input id="mt" oninput="S.title=this.value"></div><div><label>Zona / esquema</label><input id="mz" oninput="S.zone=this.value"></div><div><label>Fecha</label><input id="md" oninput="S.date=this.value"></div><div><label>Resumen</label><input id="ms" oninput="S.summary=this.value"></div><div><label>Alimentación del elemento raíz</label><input id="mf" placeholder="Ej.: OLT, cámara, cable troncal…" oninput="S.feed=this.value;draw()"></div></div>
 <main><div id="cv"><svg id="sv"><g id="g"></g></svg></div><aside id="pn"></aside></main>
 <script>
 const $=i=>document.getElementById(i);
 const COL={rojo:'#e53935',verde:'#43a047',violeta:'#8e24aa',rosa:'#ec6ea8',turquesa:'#1fb5ad',azul:'#1e66d0',amarillo:'#f2c200',naranja:'#fb8c00',marrón:'#795548',gris:'#8a8f98',blanco:'#cfd3d8',negro:'#222'};
+const MODELOS=['HTSC 206','HTSC512'],CABLES=['12Fo','24Fo','48Fo','96Fo','144Fo','192Fo','288Fo','576Fo'];
+const MC={'HTSC 206':['#dbe8ff','#1e66d0'],'HTSC512':['#eadbff','#7b3fc4']};
+const mod=n=>n.modelo||'HTSC 206';
+function cs(v,f){const l=!v||CABLES.includes(v)?CABLES:[...CABLES,v];return `<select onchange="setN('${f}',this.value)"><option value="">—</option>`+l.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')+'</select>'}
 const LOGO=null; // Para tu logo: pega aquí un dataURL PNG ('data:image/png;base64,...')
 let S,sel=null,V={k:1,x:0,y:0},seq=1;
 const uid=()=>'n'+(seq++)+Math.random().toString(36).slice(2,5);
@@ -40,18 +44,18 @@ const gn=id=>S.nodes.find(n=>n.id===id);
 const classify=c=>/e/i.test(c)?'Empalme':/^\d{6}$/.test(c)?'CTO':'Empalme';
 const tp=n=>n.typeSel&&n.typeSel!=='auto'?n.typeSel:classify(n.code);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function node(code,o={}){return {id:uid(),code,typeSel:'auto',label:'',cableIn:'',cableOut:'',notes:'',...o}}
+function node(code,o={}){return {id:uid(),code,typeSel:'auto',modelo:'HTSC 206',label:'',cableIn:'',cableOut:'',notes:'',...o}}
 function br(from,to,port,fiber,color,status,notes){return {id:uid(),from,to,port,fiber:fiber||'',color:color||'',status:status||port,notes:notes||''}}
 function example(){
- const r=node('01E0486',{label:'H8.1',cableIn:'96f',cableOut:'48f',notes:'Empalme principal'});
- const e=node('01E0358',{cableIn:'24f',cableOut:'12f'});
+ const r=node('01E0486',{label:'H8.1',modelo:'HTSC512',cableIn:'144Fo',cableOut:'96Fo',notes:'Empalme principal'});
+ const e=node('01E0358',{modelo:'HTSC 206',cableIn:'48Fo',cableOut:'24Fo'});
  const c=['269147','269272','269273','269271','269276','269277','269637','269274'].map(x=>node(x));
- const B=[br(r.id,c[0].id,'OUT1','12f','rojo'),br(r.id,c[1].id,'OUT2','12f','verde'),br(r.id,e.id,'OUT3','24f','violeta'),
- br(e.id,c[2].id,'IN S06','12f','rosa'),br(e.id,c[3].id,'IN S12','12f','turquesa'),br(e.id,c[4].id,'IN S03','12f','rojo'),br(e.id,c[5].id,'IN S04','12f','verde'),
- br(r.id,c[6].id,'OUT4','12f','rosa'),br(r.id,c[7].id,'OUT5','12f','turquesa'),br(r.id,null,'OUT6','','','LIBRE')];
- return {title:'Carta de empalme',zone:'H8.1',date:new Date().toLocaleDateString('es-ES'),summary:'Empalme principal con 6 salidas, 1 sub-empalme y 8 CTOs.',root:r.id,nodes:[r,e,...c],branches:B};
+ const B=[br(r.id,c[0].id,'OUT1','12Fo','rojo'),br(r.id,c[1].id,'OUT2','12Fo','verde'),br(r.id,e.id,'OUT3','24Fo','violeta'),
+ br(e.id,c[2].id,'IN S06','12Fo','rosa'),br(e.id,c[3].id,'IN S12','12Fo','turquesa'),br(e.id,c[4].id,'IN S03','12Fo','rojo'),br(e.id,c[5].id,'IN S04','12Fo','verde'),
+ br(r.id,c[6].id,'OUT4','12Fo','rosa'),br(r.id,c[7].id,'OUT5','12Fo','turquesa'),br(r.id,null,'OUT6','','','LIBRE')];
+ return {title:'Carta de empalme',zone:'H8.1',date:new Date().toLocaleDateString('es-ES'),summary:'Empalme principal con 6 salidas, 1 sub-empalme y 8 CTOs.',feed:'OLT / cabecera H8 (editar)',root:r.id,nodes:[r,e,...c],branches:B};
 }
-function load(d){S=d;sel=S.root;['t','z','d','s'].forEach(k=>$('m'+k).value=S[{t:'title',z:'zone',d:'date',s:'summary'}[k]]||'');panel();draw();setTimeout(fit,30)}
+function load(d){S=d;sel=S.root;['t','z','d','s','f'].forEach(k=>$('m'+k).value=S[{t:'title',z:'zone',d:'date',s:'summary',f:'feed'}[k]]||'');panel();draw();setTimeout(fit,30)}
 // ---- layout
 function layout(){
  const ch={};S.branches.forEach(b=>(ch[b.from]=ch[b.from]||[]).push(b));
@@ -74,12 +78,13 @@ function build(pdf){
  stubs.forEach(s=>{const p=pos[s.b.from];edge(X(p.x)+NW,Y(p.y)+NH/2,X(s.x),Y(s.y)+NH/2,s.b,true);
   out.push(`<rect x="${X(s.x)}" y="${Y(s.y)+10}" width="90" height="30" rx="15" fill="#fff" stroke="#8a8f98" stroke-dasharray="4 3"/><text x="${X(s.x)+45}" y="${Y(s.y)+29}" font-size="11" text-anchor="middle" fill="#667" font-family="Arial">${esc(s.b.status||'LIBRE')}</text>`);
   mx=Math.max(mx,X(s.x)+90);my=Math.max(my,Y(s.y)+NH)});
- S.nodes.forEach(n=>{const p=pos[n.id];if(!p)return;const e=tp(n)==='Empalme',f=e?'#dbe8ff':'#dcf3e2',s=e?'#1e66d0':'#2e8b4a';
+ S.nodes.forEach(n=>{const p=pos[n.id];if(!p)return;const e=tp(n)==='Empalme',[f,s]=e?MC[mod(n)]||MC['HTSC 206']:['#dcf3e2','#2e8b4a'];
   const on=!pdf&&sel===n.id;
   out.push(`<g data-n="${n.id}" style="cursor:pointer"><rect x="${X(p.x)}" y="${Y(p.y)}" width="${NW}" height="${NH}" rx="8" fill="${f}" stroke="${on?'#f2a900':s}" stroke-width="${on?4:2}"/>`+
   `<text x="${X(p.x)+10}" y="${Y(p.y)+21}" font-size="14" font-weight="bold" fill="#14202e" font-family="Arial">${esc(n.code)}${n.id===S.root?' ★':''}</text>`+
-  `<text x="${X(p.x)+10}" y="${Y(p.y)+39}" font-size="11" fill="#445" font-family="Arial">${tp(n)}${n.label?' · '+esc(n.label):''}</text></g>`);
+  `<text x="${X(p.x)+10}" y="${Y(p.y)+39}" font-size="11" fill="#445" font-family="Arial">${e?esc(mod(n)):'CTO'}${n.label?' · '+esc(n.label):''}</text></g>`);
   mx=Math.max(mx,X(p.x)+NW);my=Math.max(my,Y(p.y)+NH)});
+ const rp=pos[S.root];if(S.feed&&rp)out.push(`<text x="${X(rp.x)}" y="${Y(rp.y)-10}" font-size="12" font-weight="bold" fill="#7a5200" font-family="Arial">▶ Alimentación: ${esc(S.feed)}</text>`);
  return {html:out.join(''),w:mx+40,h:my+40,pos};
 }
 function draw(){$('g').innerHTML=build().html;ap()}
@@ -100,7 +105,7 @@ function panel(){
  p.innerHTML=`<h3>Nodo</h3><label>Código</label><input value="${esc(n.code)}" oninput="setN('code',this.value)">
  <div class="g2"><div><label>Tipo (auto: ${classify(n.code)})</label><select onchange="setN('typeSel',this.value);panel()">${['auto','Empalme','CTO'].map(t=>`<option ${t===n.typeSel?'selected':''}>${t}</option>`).join('')}</select></div>
  <div><label>Cabecera / zona</label><input value="${esc(n.label)}" oninput="setN('label',this.value)"></div></div>
- <div class="g2"><div><label>Cable entrada</label><input value="${esc(n.cableIn)}" oninput="setN('cableIn',this.value)"></div><div><label>Cable salida</label><input value="${esc(n.cableOut)}" oninput="setN('cableOut',this.value)"></div></div>
+ <label>Modelo de empalme (solo Empalmes)</label><select onchange="setN('modelo',this.value)">${MODELOS.map(m=>`<option ${m===mod(n)?'selected':''}>${m}</option>`).join('')}</select><div class="g2"><div><label>Cable de entrada</label>${cs(n.cableIn,'cableIn')}</div><div><label>Cable de salida</label>${cs(n.cableOut,'cableOut')}</div></div>${n.id===S.root?`<label>Alimentación (de dónde se alimenta)</label><input value="${esc(S.feed||'')}" oninput="S.feed=this.value;$('mf').value=this.value;draw()">`:''}
  <label>Observaciones</label><textarea rows="2" oninput="setN('notes',this.value)">${esc(n.notes)}</textarea>
  <div class="row"><button onclick="addChild()">+ Hijo</button><button onclick="addBr()">+ Rama</button><button onclick="dup()">Duplicar</button><button onclick="S.root='${n.id}';draw();panel()">★ Raíz</button><button class="d" onclick="delN()">Eliminar</button></div>
  <h3>Ramas de salida (${bs.length})</h3>`+bs.map(b=>`<div class="br"><div class="g2"><div><label>Salida / puerto</label><input value="${esc(b.port)}" oninput="setB('${b.id}','port',this.value)"></div>
@@ -109,7 +114,7 @@ function panel(){
  <div><label>Color <span class="sw" style="background:${COL[b.color]||'transparent'}"></span></label><select onchange="setB('${b.id}','color',this.value);panel()">${cols(b.color)}</select></div></div>
  <label>Estado / etiqueta</label><input value="${esc(b.status)}" oninput="setB('${b.id}','status',this.value)"><label>Notas</label><input value="${esc(b.notes)}" oninput="setB('${b.id}','notes',this.value)">
  <div class="row"><button class="d" onclick="delB('${b.id}')">Quitar rama</button></div></div>`).join('')+
- `<datalist id="fl"><option>12f<option>24f<option>48f<option>96f</datalist>`;
+ `<datalist id="fl"><option>12Fo<option>24Fo<option>48Fo<option>96Fo<option>144Fo<option>192Fo<option>288Fo<option>576Fo</datalist>`;
 }
 function setN(k,v){const n=gn(sel);n[k]=v;draw()}
 function setB(id,k,v){S.branches.find(b=>b.id===id)[k]=v;draw()}
@@ -135,16 +140,16 @@ async function pdf(){
  d.setFontSize(18);d.text(S.title||'Carta de empalme',14,16);d.setFontSize(10);
  const r=gn(S.root);d.text(`Fecha: ${S.date||''}    Zona/esquema: ${S.zone||''}    Raíz: ${r?r.code+' ('+tp(r)+')':'-'}`,14,23);
  const nE=S.nodes.filter(n=>tp(n)==='Empalme').length,nC=S.nodes.length-nE;
- d.text(d.splitTextToSize(`${S.summary||''}  [${nE} empalmes, ${nC} CTOs, ${S.branches.length} ramas]`,265),14,29);
+ d.text(d.splitTextToSize(`Alimentación del elemento raíz: ${S.feed||'-'}. ${S.summary||''}  [${nE} empalmes, ${nC} CTOs, ${S.branches.length} ramas]`,265),14,29);
  if(LOGO)d.addImage(LOGO,'PNG',250,6,35,14);
  const {html,w,h,pos}=build(true);
  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="100%" height="100%" fill="#fff"/>${html}</svg>`;
  const img=new Image();await new Promise((ok,ko)=>{img.onload=ok;img.onerror=ko;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
  const c=document.createElement('canvas');c.width=w*2;c.height=h*2;const x=c.getContext('2d');x.scale(2,2);x.drawImage(img,0,0,w,h);
- const mw=269,mh=150,k=Math.min(mw/w,mh/h);d.addImage(c.toDataURL('image/png'),'PNG',14,38,w*k,h*k);
+ const mw=269,mh=146,k=Math.min(mw/w,mh/h);d.addImage(c.toDataURL('image/png'),'PNG',14,42,w*k,h*k);
  d.addPage();d.setFontSize(13);d.text('Inventario de elementos',14,14);
- d.autoTable({startY:18,head:[['Código','Tipo','Nivel','Cabecera/zona','Cable entrada','Cable salida','Nº salidas','Observaciones']],
-  body:S.nodes.map(n=>[n.code,tp(n),(pos[n.id]?.x??0)+1,n.label,n.cableIn,n.cableOut,S.branches.filter(b=>b.from===n.id).length,n.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]}});
+ d.autoTable({startY:18,head:[['Código','Tipo','Modelo','Nivel','Cabecera/zona','Cable entrada','Cable salida','Nº salidas','Observaciones']],
+  didParseCell:q=>{if(q.section==='body'&&q.column.index===2&&MC[q.cell.raw]){q.cell.styles.fillColor=MC[q.cell.raw][1];q.cell.styles.textColor=255}},body:S.nodes.map(n=>[n.code,tp(n),tp(n)==='Empalme'?mod(n):'',(pos[n.id]?.x??0)+1,n.label,n.cableIn,n.cableOut,S.branches.filter(b=>b.from===n.id).length,n.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]}});
  const nm=id=>id?gn(id)?.code:'LIBRE';
  d.setFontSize(13);d.text('Inventario de cables / ramas',14,d.lastAutoTable.finalY+10);
  d.autoTable({startY:d.lastAutoTable.finalY+14,head:[['Origen','Salida/puerto','Destino','Fibra','Color','Estado','Notas']],
