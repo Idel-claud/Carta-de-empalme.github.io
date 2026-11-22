@@ -1,250 +1,164 @@
-<!DOCTYPE html>
-<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1e66d0"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><title>Cartas de empalme FTTH</title>
+<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cartas de empalme FTTH</title>
+<link rel="manifest" href="manifest.webmanifest"><meta name="theme-color" content="#1e66d0"><link rel="apple-touch-icon" href="icon-192.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-:root{--bg:#f3f5f8;--pn:#fff;--tx:#1c2430;--mu:#6a7686;--bd:#d6dce5;--ac:#1e66d0}
-@media(prefers-color-scheme:dark){:root{--bg:#14181f;--pn:#1d232d;--tx:#e6ebf2;--mu:#98a3b3;--bd:#323b49;--ac:#5b9bff}}
-*{box-sizing:border-box}body{margin:0;font:14px system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;display:flex;flex-direction:column}
-header{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 12px;background:var(--pn);border-bottom:1px solid var(--bd)}
-header h1{font-size:15px;margin:0 10px 0 0}
-button,select,input,textarea{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:5px 8px}
-button{cursor:pointer}button:hover{border-color:var(--ac)}button.p{background:var(--ac);color:#fff;border-color:var(--ac)}button.d{color:#d33}
-main{flex:1;display:flex;min-height:0}
-#cv{flex:1;position:relative;overflow:hidden;background:var(--bg)}svg#sv{width:100%;height:100%;cursor:grab;touch-action:none}
-aside{width:340px;max-width:100%;background:var(--pn);border-left:1px solid var(--bd);overflow:auto;padding:12px}
-aside h3{margin:12px 0 6px;font-size:13px;text-transform:uppercase;color:var(--mu);letter-spacing:.04em}
-label{display:block;font-size:12px;color:var(--mu);margin-top:6px}aside input,aside select,aside textarea{width:100%}
-.br{border:1px solid var(--bd);border-radius:8px;padding:8px;margin:8px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.sw{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;border:1px solid #0004}
-.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:6px;padding:6px 12px;background:var(--pn);border-bottom:1px solid var(--bd)}
-.meta label{margin:0}.meta input{width:100%}
-.md{position:fixed;inset:0;background:#0007;display:flex;align-items:center;justify-content:center;z-index:9}.bx{background:var(--pn);padding:16px;border-radius:10px;border:1px solid var(--bd);max-width:92%}.bx b{display:block;margin-bottom:4px}
-@media(max-width:800px){main{flex-direction:column}aside{width:100%;height:45%;border-left:0;border-top:1px solid var(--bd)}.meta{grid-template-columns:1fr 1fr}}
+:root{--bg:#10141c;--pn:#182030;--tx:#e6ebf2;--mu:#8e9aae;--bd:#2c384c;--ac:#3d8bff}
+@media(prefers-color-scheme:light){:root{--bg:#eef1f6;--pn:#fff;--tx:#1c2430;--mu:#6a7686;--bd:#ccd3de;--ac:#1e66d0}}
+*{box-sizing:border-box}body{margin:0;font:13px system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;display:flex;flex-direction:column}
+button,select,input{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:4px 7px}button{cursor:pointer}button:hover{border-color:var(--ac)}button.p{background:var(--ac);border-color:var(--ac);color:#fff}
+header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;background:var(--pn);border-bottom:1px solid var(--bd)}header b{margin-right:6px}
+#meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:5px;padding:5px 10px;background:var(--pn);border-bottom:1px solid var(--bd)}#meta input{width:100%}
+#cv{flex:1;position:relative;overflow:hidden;background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:20px 20px;touch-action:none;cursor:grab}
+#w{position:absolute;left:0;top:0;transform-origin:0 0}#sv{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}#sv .hit{pointer-events:stroke;cursor:pointer}
+.n{position:absolute;width:200px;background:var(--pn);border:2px solid var(--bd);border-radius:8px;box-shadow:0 3px 10px #0005}.n.m{border-color:#ff6d00}
+.h{height:30px;display:flex;gap:3px;align-items:center;padding:3px 4px;border-radius:5px 5px 0 0;cursor:move;color:#fff}.h input,.h select{padding:1px 3px;font-size:12px;background:#0003;color:#fff;border-color:#fff3;min-width:0}.h select{max-width:78px}.h input{width:72px;font-weight:700}
+.rw{height:26px;display:flex;position:relative;border-top:1px solid var(--bd)}.rw input{flex:1;width:50%;border:0;border-radius:0;background:transparent;padding:2px 8px;font-size:12px;min-width:0}.rw input+input{text-align:right;border-left:1px solid var(--bd)}
+.d{position:absolute;top:8px;width:11px;height:11px;border-radius:50%;background:#7a8597;border:2px solid var(--pn);cursor:crosshair;z-index:2}.d.l{left:-8px}.d.r{right:-8px}.d:hover{transform:scale(1.5)}
+.f{display:flex;gap:4px;padding:3px 4px;border-top:1px solid var(--bd)}.f button{padding:0 6px;font-size:11px}.bad{outline:1px solid #e53935}
+.md{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9}.bx{background:var(--pn);padding:14px;border-radius:10px;border:1px solid var(--bd);width:380px;max-width:94%;max-height:88vh;overflow:auto}.bx label{display:block;margin-top:8px;color:var(--mu);font-size:12px}.bx select,.bx input{width:100%}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.br{border:1px solid var(--bd);border-radius:8px;padding:8px;margin:8px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}#sw i{display:inline-block;width:22px;height:22px;border-radius:50%;margin:2px;cursor:pointer;border:1px solid #fff4}
 </style></head><body>
-<header><h1>📡 Cartas de empalme FTTH</h1>
-<button onclick="addRoot()">+ Nodo</button><button onclick="fit()">Ajustar vista</button>
-<button onclick="saveJ()">Guardar JSON</button><button onclick="$('fj').click()">Cargar JSON</button><button onclick="$('fc').click()">Importar CSV</button>
-<button onclick="if(confirm('¿Restaurar el ejemplo?')){load(example());}">Ejemplo</button>
-<button onclick="fijar()" title="Guarda la carta tal como te la han dado">📌 Fijar original</button><button id="bch" onclick="showCh()">Cambios</button><button id="inst" class="p" hidden>⬇ Instalar app</button><button class="p" onclick="pdf()">Exportar PDF</button>
-<input id="fj" type="file" accept=".json" hidden onchange="rd(this,t=>load(JSON.parse(t)))"><input id="fc" type="file" accept=".csv,.txt" hidden onchange="rd(this,csv)"></header>
-<div class="meta"><div><label>Título</label><input id="mt" oninput="S.title=this.value"></div><div><label>Zona / esquema</label><input id="mz" oninput="S.zone=this.value"></div><div><label>Fecha</label><input id="md" oninput="S.date=this.value"></div><div><label>Resumen</label><input id="ms" oninput="S.summary=this.value"></div><div><label>PON</label><input id="mp" placeholder="ALCOBENDASA1.1" oninput="S.pon=this.value"></div><div><label>Árbol</label><input id="ma" oninput="S.arbol=this.value"></div><div><label>Fusionador</label><input id="mu" oninput="S.fus=this.value"></div><div><label>Revisión</label><input id="mr" oninput="S.rev=this.value"></div></div>
-<main><div id="cv"><svg id="sv"><g id="g"></g></svg></div><aside id="pn"></aside></main>
+<header><b>📡 Cartas de empalme</b><button onclick="addNode('Empalme')">+ Empalme</button><button onclick="addNode('CTO')">+ CTO</button><button onclick="undo()">↶</button><button onclick="redo()">↷</button><button onclick="fit()">Ajustar</button>
+<button onclick="fijar()" title="Guarda la carta tal como te la han dado">📌 Fijar original</button><button id="bch" onclick="showCh()">Cambios</button>
+<button onclick="saveJ()">Guardar JSON</button><button onclick="$('fj').click()">Cargar JSON</button><button onclick="if(confirm('¿Cargar el ejemplo? Se pierde el trabajo actual.'))load(example())">Ejemplo</button>
+<button id="inst" class="p" hidden>⬇ Instalar</button><button class="p" onclick="pdf()">Exportar PDF</button><input id="fj" type="file" accept=".json" hidden onchange="rd(this)"></header>
+<div id="meta"><input data-m="title" placeholder="Título"><input data-m="pon" placeholder="PON (ALCOBENDASA1.1)"><input data-m="arbol" placeholder="Árbol"><input data-m="zone" placeholder="Zona / esquema"><input data-m="fus" placeholder="Fusionador"><input data-m="rev" placeholder="Revisión"><input data-m="date" placeholder="Fecha"></div>
+<div id="cv"><div id="w"></div></div>
 <script>
-const $=i=>document.getElementById(i);
-const COL={rojo:'#e53935',verde:'#43a047',violeta:'#8e24aa',rosa:'#ec6ea8',turquesa:'#1fb5ad',azul:'#1e66d0',amarillo:'#f2c200',naranja:'#fb8c00',marrón:'#795548',gris:'#8a8f98',blanco:'#cfd3d8',negro:'#222'};
-const MODELOS=['HTSC 206','HTSC512'],CABLES=['12Fo','24Fo','48Fo','96Fo','144Fo','192Fo','288Fo','512Fo','576Fo'];
-const MC={'HTSC 206':['#dbe8ff','#1e66d0'],'HTSC512':['#eadbff','#7b3fc4']};
-const mod=n=>n.modelo||'HTSC 206';
-function cs(v,f){const l=!v||CABLES.includes(v)?CABLES:[...CABLES,v];return `<select onchange="setN('${f}',this.value)"><option value="">—</option>`+l.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')+'</select>'}
+const $=i=>document.getElementById(i),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const W=200,HD=30,RH=26,CABLES=['12Fo','24Fo','48Fo','96Fo','144Fo','192Fo','288Fo','512Fo','576Fo'];
 const FC={'12Fo':['azul','#1e66d0'],'24Fo':['verde','#43a047'],'48Fo':['rojo','#e53935'],'96Fo':['amarillo','#f2c200'],'144Fo':['naranja','#fb8c00'],'192Fo':['marrón','#795548'],'288Fo':['blanco','#cfd3d8'],'512Fo':['gris','#8a8f98'],'576Fo':['violeta','#8e24aa']};
-const cinfo=b=>{const m=/^\s*(\d+)\s*f/i.exec(b.fiber||''),k=m?m[1]+'Fo':'';return FC[k]||[b.color||'',COL[b.color]||'#8a8f98']};
-function fsel(b){const v=b.fiber,l=!v||CABLES.includes(v)?CABLES:[...CABLES,v];return `<select onchange="setB('${b.id}','fiber',this.value);panel()"><option value="">—</option>`+l.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')+'</select>'}
-const RATIOS=['1:2','1:3','1:4','1:6','1:8','1:12'],FIB=['rojo','verde','amarillo','azul','naranja','marrón','blanco','violeta','rosa','turquesa','gris','negro','incoloro'],FIBOPT=[...FIB,...FIB.map(c=>c+' *'),...FIB.map(c=>c+' **'),...FIB.map(c=>c+' ***')];
-const FIBC={rojo:'#e53935',verde:'#43a047',amarillo:'#f2c200',azul:'#1e66d0',naranja:'#fb8c00','marrón':'#8d4b1f',blanco:'#eee',violeta:'#8e24aa',rosa:'#f48fb1',turquesa:'#1fb5ad',gris:'#9e9e9e',negro:'#222',incoloro:'#f1f1f1'},SC={SN1:'#e53935',SN2:'#1e66d0',SN3:'#43a047'};
-const fcHex=v=>FIBC[(v||'').toLowerCase().replace(/\s*(\(anillo\)|\*+)$/,'').trim().replace('marron','marrón')]||'';
-const reE=/^(?:[A-Z]{3}\d{2,3}|\d{2})E\d{4}$/i,reC=/^\d{6}[A-Z]?$/i,tpx=c=>/^[A-Z]{3}\d{2,3}E\d{4}$/i.test(c||'');
-const sps=n=>n.splitters||[];
-const spLabel=(n,s)=>`${s.nivel} - ${n.zona||S.zone||'Zxx.x'} - 1:${String(s.ratio.split(':')[1]).padStart(2,'0')}`;
-const spIn=(n,s)=>{const same=sps(n).filter(x=>x.ratio===s.ratio);return 'IN S'+String(s.ratio.split(':')[1]).padStart(2,'0')+(same.length>1?'-'+(same.indexOf(s)+1):'')};
-const orig=(n,b)=>{const s=sps(n).find(x=>x.id===b.sp);return s?spIn(n,s)+' · '+spLabel(n,s):'Fibra directa'};
-const fcs=(v,hd)=>`<select onchange="${hd}"><option value="">—</option>`+FIBOPT.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')+'</select>';
-function warns(n){const w=[],c=n.code||'';
- if(!reE.test(c)&&!reC.test(c))w.push('Código fuera de formato (LLECCCC, PPPLLECCCC o LLCCCC).');
- if(tpx(c))w.push('Empalme TX: solo con trabajo programado (TP).');
- const out=S.branches.filter(b=>b.from===n.id);
- sps(n).forEach(s=>{const k=+s.ratio.split(':')[1],u=out.filter(b=>b.sp===s.id).length;if(u>k)w.push(`${s.nivel} ${s.ratio}: ${u} salidas usadas, máximo ${k}.`)});
- const g={};out.forEach(b=>{if(b.to)(g[b.to]=g[b.to]||[]).push(b)});
- Object.keys(g).forEach(t=>{const l=g[t],cap=parseInt(l[0].fiber)||0,d=(gn(t)||{}).code,s={};
-  if(cap&&l.length>cap)w.push(`Hacia ${d}: ${l.length} fibras en un cable de ${cap}.`);
-  l.forEach(b=>{if(b.fc){if(s[b.fc])w.push(`Fibra ${b.fc} repetida hacia ${d}.`);s[b.fc]=1}})});
- return w}
-const warnHtml=n=>{const w=warns(n);return w.length?`<div class="br" style="border-color:#f2a900">⚠ ${w.map(esc).join('<br>⚠ ')}</div>`:''};
-function spHtml(n){return `<label>Zona PON (carta)</label><input value="${esc(n.zona||'')}" oninput="setN('zona',this.value)"><h3>Splitters (${sps(n).length})</h3>`+sps(n).map((s,i)=>`<div class="br"><div class="g2"><div><label>Nivel</label><select onchange="setSp(${i},'nivel',this.value);panel()">${['SN1','SN2','SN3'].map(v=>`<option ${v===s.nivel?'selected':''}>${v}</option>`).join('')}</select></div><div><label>Relación</label><select onchange="setSp(${i},'ratio',this.value);panel()">${RATIOS.map(v=>`<option ${v===s.ratio?'selected':''}>${v}</option>`).join('')}</select></div></div><label>Fibra de entrada</label>${fcs(s.fiberIn,`setSp(${i},'fiberIn',this.value)`)}<div class="row"><span style="color:var(--mu)">${esc(spIn(n,s)+' · '+spLabel(n,s))}</span><button class="d" onclick="delSp(${i})">Quitar</button></div></div>`).join('')+'<div class="row"><button onclick="addSp()">+ Splitter</button></div>'}
-const bsel=(b,n)=>`<select onchange="setB('${b.id}','sp',this.value)"><option value="">Fibra directa</option>`+sps(n).map(s=>`<option value="${s.id}" ${s.id===b.sp?'selected':''}>${s.nivel} ${s.ratio} (${spIn(n,s)})</option>`).join('')+'</select>';
-function addSp(){const n=gn(sel);(n.splitters=n.splitters||[]).push({id:uid(),nivel:'SN1',ratio:'1:6',fiberIn:''});panel();draw()}
-function setSp(i,k,v){gn(sel).splitters[i][k]=v;draw()}
-function delSp(i){const n=gn(sel),s=n.splitters.splice(i,1)[0];S.branches.forEach(b=>{if(b.sp===s.id)b.sp=''});panel();draw()}
-function fijar(){if(S.base&&!confirm('Ya hay una carta original fijada. ¿Sustituirla por el estado actual?'))return;S.base=JSON.stringify({nodes:S.nodes,branches:S.branches,root:S.root});S.baseDate=new Date().toLocaleString('es-ES');S.mot={};draw()}
+const FIB=['rojo','verde','amarillo','azul','naranja','marrón','blanco','violeta','rosa','turquesa','gris','negro'];
+const FIBC={rojo:'#e53935',verde:'#43a047',amarillo:'#f2c200',azul:'#1e66d0',naranja:'#fb8c00','marrón':'#8d4b1f',blanco:'#eee',violeta:'#8e24aa',rosa:'#f48fb1',turquesa:'#1fb5ad',gris:'#9e9e9e',negro:'#222'};
+const fcx=v=>FIBC[(v||'').toLowerCase().replace(/\s*\*+$/,'').trim().replace('marron','marrón')]||'';
+const MOD={'HTSC 206':'#1e66d0','HTSC512':'#7b3fc4'},reE=/^(?:[A-Z]{3}\d{2,3}|\d{2})E\d{4}$/i,reC=/^\d{6}[A-Z]?$/i;
+let S,H=[],Rd=[],V={k:1,x:40,y:40},CM={},seq=1,con=null,dr=null,pan=null;
+const cv=$('cv'),uid=()=>'i'+(seq++).toString(36)+Math.random().toString(36).slice(2,5),gn=id=>S.nodes.find(n=>n.id===id),hc=n=>n.type==='CTO'?'#2e8b4a':MOD[n.modelo]||MOD['HTSC 206'];
+const nh=n=>HD+n.rows.length*RH+4,cabAt=(n,r,s)=>S.cables.find(c=>[c.a,c.b].some(p=>p.n===n&&p.r===r&&p.s===s));
+function nodeNew(type,code,x,y,rows){return {id:uid(),type,code,modelo:'HTSC 206',x,y,rows:(rows||[['',''],['','']]).map(r=>({id:uid(),l:r[0],r:r[1]}))}}
+function example(){
+ const A=nodeNew('Empalme','01E0486',40,60,[['SN1 1X6','OUT1'],['','OUT2'],['','OUT3'],['','OUT4'],['','OUT5'],['','OUT6']]);A.modelo='HTSC512';
+ const D=nodeNew('Empalme','01E0358',560,210,[['IN1','OUT1'],['','OUT2'],['','OUT3']]),B=nodeNew('CTO','269147',560,20,[['IN','']]),C=nodeNew('CTO','269272',560,110,[['IN','']]),E=nodeNew('CTO','269273',900,210,[['IN','']]),F=nodeNew('CTO','269637',900,320,[['IN','']]);
+ const k=(a,i,b,j,cap,fc)=>({id:uid(),a:{n:a.id,r:a.rows[i].id,s:'r'},b:{n:b.id,r:b.rows[j].id,s:'l'},cap,fc,note:''});
+ return {title:'Carta de empalme',zone:'H8.1',date:new Date().toLocaleDateString('es-ES'),pon:'',arbol:'',fus:'',rev:'',mot:{},nodes:[A,B,C,D,E,F],cables:[k(A,0,B,0,'12Fo','rojo'),k(A,1,C,0,'12Fo','verde'),k(A,2,D,0,'24Fo','violeta'),k(D,0,E,0,'12Fo','rosa'),k(A,3,F,0,'12Fo','amarillo')]};}
+// ---- historial y guardado
+const snap=()=>JSON.stringify({nodes:S.nodes,cables:S.cables});
+function pu(){H.push(snap());if(H.length>60)H.shift();Rd=[]}
+function rs(o){S.nodes=o.nodes;S.cables=o.cables;render();sv()}
+function undo(){if(H.length){Rd.push(snap());rs(JSON.parse(H.pop()))}}
+function redo(){if(Rd.length){H.push(snap());rs(JSON.parse(Rd.pop()))}}
+function sv(){cb();try{localStorage.setItem('cfusion',JSON.stringify(S))}catch(e){}}
+function saveJ(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download=(S.pon||S.zone||'carta')+'.json';a.click()}
+function rd(i){const r=new FileReader();r.onload=()=>{try{load(JSON.parse(r.result))}catch(e){alert('Archivo no válido')}i.value=''};r.readAsText(i.files[0])}
+function load(d){S=d;S.mot=S.mot||{};H=[];Rd=[];document.querySelectorAll('[data-m]').forEach(i=>i.value=S[i.dataset.m]||'');render();fit();sv()}
+$('meta').oninput=e=>{S[e.target.dataset.m]=e.target.value;sv()};
+// ---- cambios respecto a la original
+function fijar(){if(S.base&&!confirm('Ya hay una carta original fijada. ¿Sustituirla por el estado actual?'))return;S.base=snap();S.baseDate=new Date().toLocaleString('es-ES');S.mot={};render();sv()}
 function cb(){const b=$('bch');if(b)b.textContent='Cambios'+(S.base?' ('+diff().length+')':'')}
 function changeMap(){const m={};diff().forEach(r=>{m[r.key]=(m[r.key]==='A'||r.tipo==='Añadido')?'A':'M'});return m}
 function diff(){
- if(!S.base)return [];
- const B=JSON.parse(S.base),R=[],nid=(L,id)=>L.nodes.find(n=>n.id===id),cod=(L,id)=>id?((nid(L,id)||{}).code||'?'):'LIBRE';
- const tpn=n=>n.typeSel&&n.typeSel!=='auto'?n.typeSel:classify(n.code);
- const nf={code:'Código',tp:'Tipo',modelo:'Modelo',cableIn:'Cable entrada',cableOut:'Cable salida',zona:'Zona PON',label:'Cabecera',spl:'Splitters'};
- const nv=(n,k)=>k==='tp'?tpn(n):k==='spl'?sps(n).map(s=>spIn(n,s)+' '+s.nivel+' '+s.ratio+(s.fiberIn?' ('+s.fiberIn+')':'')).join(', '):(n[k]||'');
- new Set([...B.nodes.map(n=>n.id),...S.nodes.map(n=>n.id)]).forEach(id=>{const a=nid(B,id),b=gn(id);
-  if(!a)R.push({key:id,elem:b.code,tipo:'Añadido',campo:'Elemento',antes:'',despues:tpn(b)});
-  else if(!b)R.push({key:id,elem:a.code,tipo:'Eliminado',campo:'Elemento',antes:tpn(a),despues:''});
-  else Object.keys(nf).forEach(k=>{const x=nv(a,k),y=nv(b,k);if(x!==y)R.push({key:id,elem:b.code,tipo:'Modificado',campo:nf[k],antes:x,despues:y})})});
- const bf={port:'Salida',fiber:'Cable',fc:'Fibra',amp:'AMP',tubo:'Tubo',capa:'Capa',status:'Estado'};
- const spn=(L,b)=>{const n=nid(L,b.from),s=n&&sps(n).find(x=>x.id===b.sp);return s?spIn(n,s):'Fibra directa'};
- new Set([...B.branches.map(b=>b.id),...S.branches.map(b=>b.id)]).forEach(id=>{const a=B.branches.find(x=>x.id===id),b=S.branches.find(x=>x.id===id);
-  if(!a)R.push({key:id,elem:cod(S,b.from),tipo:'Añadido',campo:'Rama',antes:'',despues:b.port+' → '+cod(S,b.to)+(b.fiber?' ('+b.fiber+')':'')});
-  else if(!b)R.push({key:id,elem:cod(B,a.from),tipo:'Eliminado',campo:'Rama',antes:a.port+' → '+cod(B,a.to),despues:''});
-  else{const el=cod(S,b.from)+' · '+b.port,cmp=(c,x,y)=>{if(x!==y)R.push({key:id,elem:el,tipo:'Modificado',campo:c,antes:x,despues:y})};
-   cmp('Destino',cod(B,a.to),cod(S,b.to));cmp('Origen',spn(B,a),spn(S,b));
-   Object.keys(bf).forEach(k=>cmp(bf[k],String(a[k]===true?'sí':a[k]||''),String(b[k]===true?'sí':b[k]||'')))}});
+ if(!S.base)return [];const B=JSON.parse(S.base),R=[],nn=(L,id)=>L.nodes.find(n=>n.id===id);
+ const ce=(L,e)=>{const n=nn(L,e.n);return (n?n.code:'?')+' · '+(e.s==='l'?'ent':'sal')+(n?n.rows.findIndex(r=>r.id===e.r)+1:'?')};
+ new Set([...B.nodes,...S.nodes].map(n=>n.id)).forEach(id=>{const a=nn(B,id),b=nn(S,id);
+  if(!a){R.push({key:id,elem:b.code,tipo:'Añadido',campo:'Elemento',antes:'',despues:b.type});return}
+  if(!b){R.push({key:id,elem:a.code,tipo:'Eliminado',campo:'Elemento',antes:a.type,despues:''});return}
+  [['code','Código'],['type','Tipo'],['modelo','Modelo']].forEach(([k,t])=>{if((a[k]||'')!==(b[k]||'')&&!(k==='modelo'&&b.type==='CTO'))R.push({key:id,elem:b.code,tipo:'Modificado',campo:t,antes:a[k]||'',despues:b[k]||''})});
+  new Set([...a.rows,...b.rows].map(r=>r.id)).forEach(rid=>{const x=a.rows.find(r=>r.id===rid),y=b.rows.find(r=>r.id===rid),i=b.rows.indexOf(y)+1;
+   if(!x)R.push({key:id,elem:b.code,tipo:'Añadido',campo:'Fila '+i,antes:'',despues:y.l+' | '+y.r});
+   else if(!y)R.push({key:id,elem:b.code,tipo:'Eliminado',campo:'Fila',antes:x.l+' | '+x.r,despues:''});
+   else ['l','r'].forEach(s=>{if(x[s]!==y[s])R.push({key:id,elem:b.code,tipo:'Modificado',campo:'Fila '+i+(s==='l'?' entrada':' salida'),antes:x[s],despues:y[s]})})})});
+ new Set([...B.cables,...S.cables].map(c=>c.id)).forEach(id=>{const a=B.cables.find(c=>c.id===id),b=S.cables.find(c=>c.id===id),d=(L,c)=>ce(L,c.a)+' → '+ce(L,c.b);
+  if(!a)R.push({key:id,elem:ce(S,b.a),tipo:'Añadido',campo:'Cable',antes:'',despues:d(S,b)+' ('+(b.cap||'')+(b.fc?' '+b.fc:'')+')'});
+  else if(!b)R.push({key:id,elem:ce(B,a.a),tipo:'Eliminado',campo:'Cable',antes:d(B,a),despues:''});
+  else[['Conexión',d(B,a),d(S,b)],['Capacidad',a.cap,b.cap],['Fibra',a.fc,b.fc],['Nota',a.note,b.note]].forEach(([c,x,y])=>{if((x||'')!==(y||''))R.push({key:id,elem:ce(S,b.a),tipo:'Modificado',campo:c,antes:x||'',despues:y||''})})});
  return R}
 function showCh(){
  if(!S.base){alert('Primero pulsa «Fijar original» con la carta tal como te la han dado.');return}
- const R=diff(),by={},MOT=['','Fibra dañada','CTO nueva o movida','Falta de espacio','Cambio de splitter','Reserva usada','Error en la carta','Otro'];
- R.forEach(r=>(by[r.key]=by[r.key]||[]).push(r));
+ const R=diff(),by={},MOT=['','Fibra dañada','CTO nueva o movida','Falta de espacio','Cambio de splitter','Reserva usada','Error en la carta','Otro'];R.forEach(r=>(by[r.key]=by[r.key]||[]).push(r));
  const m=document.createElement('div');m.className='md';
- m.innerHTML='<div class="bx" style="width:620px;max-height:85vh;overflow:auto"><b>Cambios respecto a la carta original ('+R.length+')</b>'+(Object.keys(by).length?Object.keys(by).map(k=>{const l=by[k],mo=S.mot[k]||{};return '<div class="br"><b>'+esc(l[0].elem)+'</b> · '+l[0].tipo+l.slice(0,8).map(r=>'<div style="font-size:12px">'+esc(r.campo)+': '+esc(r.antes||'—')+' → '+esc(r.despues||'—')+'</div>').join('')+'<div class="g2"><select data-k="'+k+'" data-f="m">'+MOT.map(v=>'<option'+(v===mo.m?' selected':'')+'>'+v+'</option>').join('')+'</select><input data-k="'+k+'" data-f="n" placeholder="Nota" value="'+esc(mo.n||'')+'"></div></div>'}).join(''):'<p>Sin modificaciones.</p>')+'<div class="row"><button class="p" data-x="1">Cerrar</button></div></div>';
- m.addEventListener('change',e=>{const k=e.target.dataset.k;if(k)(S.mot[k]=S.mot[k]||{})[e.target.dataset.f]=e.target.value});
- m.onclick=e=>{if(e.target.dataset.x||e.target===m)m.remove()};
- document.body.appendChild(m)}
-const LOGO=null; // Para tu logo: pega aquí un dataURL PNG ('data:image/png;base64,...')
-let S,sel=null,V={k:1,x:0,y:0},seq=1;
-const uid=()=>'n'+(seq++)+Math.random().toString(36).slice(2,5);
-const gn=id=>S.nodes.find(n=>n.id===id);
-const classify=c=>reE.test(c)?'Empalme':reC.test(c)?'CTO':'Empalme';
-const tp=n=>n.typeSel&&n.typeSel!=='auto'?n.typeSel:classify(n.code);
-const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function node(code,o={}){return {id:uid(),code,typeSel:'auto',modelo:'HTSC 206',label:'',cableIn:'',cableOut:'',notes:'',...o}}
-function br(from,to,port,fiber,color,status,notes){return {id:uid(),from,to,sp:'',fc:'',port,fiber:fiber||'',color:color||'',status:status||port,notes:notes||''}}
-function example(){
- const r=node('01E0486',{label:'H8.1',modelo:'HTSC512',cableIn:'512Fo',cableOut:'96Fo',notes:'Empalme principal'});
- const e=node('01E0358',{modelo:'HTSC 206',cableIn:'48Fo',cableOut:'24Fo'});
- const c=['269147','269272','269273','269271','269276','269277','269637','269274'].map(x=>node(x));
- const B=[br(r.id,c[0].id,'OUT1','12Fo','rojo'),br(r.id,c[1].id,'OUT2','12Fo','verde'),br(r.id,e.id,'OUT3','24Fo','violeta'),
- br(e.id,c[2].id,'IN S06','12Fo','rosa'),br(e.id,c[3].id,'IN S12','12Fo','turquesa'),br(e.id,c[4].id,'IN S03','12Fo','rojo'),br(e.id,c[5].id,'IN S04','12Fo','verde'),
- br(r.id,c[6].id,'OUT4','12Fo','rosa'),br(r.id,c[7].id,'OUT5','12Fo','turquesa'),br(r.id,null,'OUT6','','','LIBRE')];
- r.zona='H8.1';r.splitters=[{id:'spA',nivel:'SN1',ratio:'1:6',fiberIn:'rojo'}];B.filter(b=>b.from===r.id).forEach((b,i)=>{b.sp='spA';b.fc=['rojo','verde','amarillo','azul','naranja','rosa'][i]});
- return {title:'Carta de empalme',zone:'H8.1',date:new Date().toLocaleDateString('es-ES'),summary:'Empalme principal con 6 salidas, 1 sub-empalme y 8 CTOs.',root:r.id,nodes:[r,e,...c],branches:B};
-}
-function load(d){S=d;S.mot=S.mot||{};sel=S.root;['t','z','d','s','p','a','u','r'].forEach(k=>$('m'+k).value=S[{t:'title',z:'zone',d:'date',s:'summary',p:'pon',a:'arbol',u:'fus',r:'rev'}[k]]||'');panel();draw();setTimeout(fit,30)}
-// ---- layout
-function layout(){
- const ch={};S.branches.forEach(b=>(ch[b.from]=ch[b.from]||[]).push(b));
- const pos={},stubs=[],seen=new Set();let y=0;
- function go(id,d){seen.add(id);const ks=ch[id]||[],ys=[];
-  ks.forEach(b=>{if(b.to&&gn(b.to)){if(!seen.has(b.to))go(b.to,d+1);if(pos[b.to])ys.push(pos[b.to].y)}else{stubs.push({b,x:d+1,y});ys.push(y);y++}});
-  if(!ys.length){pos[id]={x:d,y};y++}else pos[id]={x:d,y:ys.reduce((a,c)=>a+c,0)/ys.length}}
- const top=id=>{let c=id,g=0;while(g++<300){const b=S.branches.find(x=>x.to===c&&x.from!==c&&gn(x.from));if(!b)break;c=b.from}return c};
- if(gn(S.root))go(top(S.root),0);
- S.nodes.forEach(n=>{if(!seen.has(n.id)){const t=top(n.id);go(seen.has(t)?n.id:t,0)}});
- return {pos,stubs};
-}
-const X=x=>40+x*280,Y=y=>50+y*84,NW=160,NH=62;
-function build(pdf){
- const {pos,stubs}=layout();let h='',mx=0,my=0;const out=[];
- const col=b=>cinfo(b)[1],cnt={},chm=changeMap(),mk=(x,y)=>`<circle cx="${x}" cy="${y}" r="5" fill="#ff6d00" stroke="#fff"/>`;
- const edge=(x1,y1,x2,y2,b,dash)=>{const m=(x1+x2)/2;
-  if(col(b)==='#cfd3d8')out.push(`<path d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}" fill="none" stroke="#8a8f98" stroke-width="5.5"/>`);
-  out.push(`<path d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}" fill="none" stroke="${col(b)}" stroke-width="3" ${dash?'stroke-dasharray="6 4"':''}/>`+
-  `<text x="${m}" y="${(y1+y2)/2-6}" font-size="11" text-anchor="middle" fill="#445" font-family="Arial">${esc(b.port)}${b.fiber?' · '+esc(b.fiber):''}${b.fc?' · '+esc(b.fc):''}${b.amp?' · AMP':''}</text>`)};
- S.branches.forEach(b=>{const p=pos[b.from];if(!p)return;const q=b.to&&pos[b.to];
-  if(q&&gn(b.to)){const kk=b.from+b.to,dy=((cnt[kk]=(cnt[kk]||0)+1)-1)*9;edge(X(p.x)+NW,Y(p.y)+NH/2+dy,X(q.x),Y(q.y)+NH/2+dy,b);if(chm[b.id])out.push(mk((X(p.x)+NW+X(q.x))/2,(Y(p.y)+Y(q.y))/2+NH/2+dy))}});
- stubs.forEach(s=>{const p=pos[s.b.from];edge(X(p.x)+NW,Y(p.y)+NH/2,X(s.x),Y(s.y)+NH/2,s.b,true);if(chm[s.b.id])out.push(mk((X(p.x)+NW+X(s.x))/2,(Y(p.y)+Y(s.y))/2+NH/2));
-  out.push(`<rect x="${X(s.x)}" y="${Y(s.y)+10}" width="90" height="30" rx="15" fill="#fff" stroke="#8a8f98" stroke-dasharray="4 3"/><text x="${X(s.x)+45}" y="${Y(s.y)+29}" font-size="11" text-anchor="middle" fill="#667" font-family="Arial">${esc(s.b.status||'LIBRE')}</text>`);
-  mx=Math.max(mx,X(s.x)+90);my=Math.max(my,Y(s.y)+NH)});
- S.nodes.forEach(n=>{const p=pos[n.id];if(!p)return;const e=tp(n)==='Empalme',[f,s]=e?MC[mod(n)]||MC['HTSC 206']:['#dcf3e2','#2e8b4a'];
-  const on=!pdf&&sel===n.id;
-  out.push(`<g data-n="${n.id}" style="cursor:pointer"><rect x="${X(p.x)}" y="${Y(p.y)}" width="${NW}" height="${NH}" rx="8" fill="${f}" stroke="${on?'#f2a900':chm[n.id]?'#ff6d00':s}" stroke-width="${on?4:chm[n.id]?3:2}"${chm[n.id]&&!on?' stroke-dasharray="6 3"':''}/>`+
-  `<text x="${X(p.x)+10}" y="${Y(p.y)+21}" font-size="14" font-weight="bold" fill="#14202e" font-family="Arial">${esc(n.code)}${n.id===S.root?' ★':''}</text>`+
-  `<text x="${X(p.x)+10}" y="${Y(p.y)+39}" font-size="11" fill="#445" font-family="Arial">${e?esc(mod(n)):'CTO'}${n.label?' · '+esc(n.label):''}</text><text x="${X(p.x)+10}" y="${Y(p.y)+55}" font-size="10" font-weight="bold" font-family="Arial" fill="#a35a00">${tpx(n.code)?'TX ':''}${sps(n).map(s=>`<tspan fill="${SC[s.nivel]}">${s.nivel} ${s.ratio}</tspan>`).join(' ')}</text>${chm[n.id]?`<text x="${X(p.x)+NW-6}" y="${Y(p.y)+14}" text-anchor="end" font-size="10" font-weight="bold" font-family="Arial" fill="#ff6d00">${chm[n.id]==='A'?'NUEVO':'MOD'}</text>`:''}</g>`);
-  mx=Math.max(mx,X(p.x)+NW);my=Math.max(my,Y(p.y)+NH)});
- out.push(`<text x="40" y="${my+34}" font-size="11" font-weight="bold" fill="#445" font-family="Arial">Cables:</text>`);
- Object.keys(FC).forEach((k,i)=>out.push(`<rect x="${100+i*92}" y="${my+26}" width="22" height="8" rx="3" fill="${FC[k][1]}" stroke="#8a8f98"/><text x="${126+i*92}" y="${my+34}" font-size="11" fill="#445" font-family="Arial">${k}</text>`));
- if(S.base)out.push(`<text x="40" y="${my+54}" font-size="11" fill="#ff6d00" font-family="Arial">● naranja = modificado o nuevo respecto a la carta original</text>`);
- return {html:out.join(''),w:Math.max(mx,930)+40,h:my+66,pos};
-}
-function draw(){$('g').innerHTML=build().html;ap();cb()}
-const ap=()=>$('g').setAttribute('transform',`translate(${V.x},${V.y}) scale(${V.k})`);
-function fitIfNeeded(){const {w,h}=build(),c=$('cv');if(V.x+w*V.k>c.clientWidth||V.y+h*V.k>c.clientHeight)fit()}
-function fit(){const {w,h}=build(),c=$('cv');V.k=Math.min(c.clientWidth/w,c.clientHeight/h,1.2);V.x=(c.clientWidth-w*V.k)/2;V.y=(c.clientHeight-h*V.k)/2;ap()}
-const sv=$('sv');let drag=null;
-sv.addEventListener('wheel',e=>{e.preventDefault();const r=sv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,k=Math.min(4,Math.max(.15,V.k*(e.deltaY<0?1.12:.89)));
- V.x=mx-(mx-V.x)*k/V.k;V.y=my-(my-V.y)*k/V.k;V.k=k;ap()},{passive:false});
-sv.addEventListener('pointerdown',e=>{const n=e.target.closest('[data-n]');if(n){sel=n.dataset.n;panel();draw();return}drag={x:e.clientX-V.x,y:e.clientY-V.y};sv.setPointerCapture(e.pointerId)});
-sv.addEventListener('pointermove',e=>{if(drag){V.x=e.clientX-drag.x;V.y=e.clientY-drag.y;ap()}});
-sv.addEventListener('pointerup',()=>drag=null);
-// ---- panel
-function panel(){
- const n=gn(sel),p=$('pn');if(!n){p.innerHTML='<p style="color:var(--mu)">Selecciona un nodo o pulsa «+ Nodo».</p>';return}
- const bs=S.branches.filter(b=>b.from===n.id);
- const opts=(v)=>`<option value="">— LIBRE (terminal) —</option>`+S.nodes.filter(x=>x.id!==n.id).map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.code)}</option>`).join('');
- const cols=v=>`<option value=""></option>`+Object.keys(COL).map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('');
- p.innerHTML=`${warnHtml(n)}<h3>Nodo</h3><label>Código</label><input value="${esc(n.code)}" oninput="setN('code',this.value)" onchange="panel()">
- <div class="g2"><div><label>Tipo de elemento (auto → ${classify(n.code)})</label><select onchange="setN('typeSel',this.value);panel()">${['Empalme','CTO','auto'].map(t=>`<option value="${t}" ${t===n.typeSel?'selected':''}>${t==='auto'?'Auto (por código)':t}</option>`).join('')}</select></div>
- <div><label>Cabecera / zona</label><input value="${esc(n.label)}" oninput="setN('label',this.value)"></div></div>
- ${tp(n)==='Empalme'?`<label>Modelo de empalme (solo Empalmes)</label><select onchange="setN('modelo',this.value)">${MODELOS.map(m=>`<option ${m===mod(n)?'selected':''}>${m}</option>`).join('')}</select>`:''}<div class="g2"><div><label>Cable de entrada</label>${cs(n.cableIn,'cableIn')}</div><div><label>Cable de salida</label>${cs(n.cableOut,'cableOut')}</div></div>
- <label>Observaciones</label><textarea rows="2" oninput="setN('notes',this.value)">${esc(n.notes)}</textarea>
- <div class="row">${S.branches.some(b=>b.to===n.id)?'':'<button onclick="addPrev()">+ Anterior (alimenta a este)</button>'}<button onclick="addChild()">+ Hijo</button><button onclick="addBr()">+ Rama</button><button onclick="dup()">Duplicar</button><button onclick="S.root='${n.id}';draw();panel()">★ Raíz</button><button class="d" onclick="delN()">Eliminar</button></div>
- ${spHtml(n)}<h3>Ramas de salida (${bs.length})</h3>`+bs.map(b=>`<div class="br"><div class="g2"><div><label>Salida / puerto</label><input value="${esc(b.port)}" oninput="setB('${b.id}','port',this.value)"></div>
- <div><label>Destino</label><select onchange="setB('${b.id}','to',this.value||null)">${opts(b.to)}</select></div>
- <div><label>Cable / fibra</label>${fsel(b)}</div>
- <div><label>Color (según cable)</label><div style="padding:5px 0"><span class="sw" style="background:${cinfo(b)[1]}"></span> ${cinfo(b)[0]||'—'}</div></div></div>
- <div class="g2"><div><label>Sale de</label>${bsel(b,n)}</div><div><label>Color de fibra</label>${fcs(b.fc,`setB('${b.id}','fc',this.value)`)}</div></div><div class="g2"><div><label>Tubo</label><input value="${esc(b.tubo||'')}" oninput="setB('${b.id}','tubo',this.value)"></div><div><label>Capa (512Fo)</label><select onchange="setB('${b.id}','capa',this.value)">${['','Exterior','Núcleo'].map(v=>`<option ${v===(b.capa||'')?'selected':''}>${v}</option>`).join('')}</select></div></div><label style="display:flex;gap:6px;align-items:center"><input type="checkbox" style="width:auto" ${b.amp?'checked':''} onchange="setB('${b.id}','amp',this.checked)"> PON ampliado (100 % potencia)</label><label>Estado / etiqueta</label><input value="${esc(b.status)}" oninput="setB('${b.id}','status',this.value)"><label>Notas</label><input value="${esc(b.notes)}" oninput="setB('${b.id}','notes',this.value)">
- <div class="row"><button class="d" onclick="delB('${b.id}')">Quitar rama</button></div></div>`).join('')+
- `<datalist id="fl"><option>12Fo<option>24Fo<option>48Fo<option>96Fo<option>144Fo<option>192Fo<option>288Fo<option>576Fo</datalist>`;
-}
-function setN(k,v){const n=gn(sel);n[k]=v;draw()}
-function setB(id,k,v){S.branches.find(b=>b.id===id)[k]=v;draw()}
-function askType(cb){const m=document.createElement('div');m.className='md';
- m.innerHTML='<div class="bx"><b>¿Qué tipo de elemento es?</b><div class="row"><button class="p" data-t="Empalme">Empalme</button><button class="p" data-t="CTO">CTO</button><button data-t="auto">Auto (por código)</button></div><div class="row"><button data-t="">Cancelar</button></div></div>';
- m.onclick=e=>{const t=e.target.dataset&&e.target.dataset.t;if(t===undefined)return;m.remove();if(t!=='')cb(t)};document.body.appendChild(m)}
-function addRoot(){askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);sel=n.id;panel();draw();fitIfNeeded()})}
-function addBr(){S.branches.push(br(sel,null,'OUT'+(S.branches.filter(b=>b.from===sel).length+1),gn(sel).cableOut));panel();draw();fitIfNeeded()}
-function addChild(){const o=sel;askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);S.branches.push(br(o,n.id,'OUT'+(S.branches.filter(b=>b.from===o).length+1),gn(o).cableOut));sel=n.id;panel();draw();fitIfNeeded()})}
-function addPrev(){const n=gn(sel);askType(t=>{const p=node('ANTERIOR',{typeSel:t,cableOut:n.cableIn});S.nodes.push(p);S.branches.push(br(p.id,n.id,'ALIM',n.cableIn,'','ALIM'));sel=p.id;panel();draw();fitIfNeeded()})}
-function dup(){const o=gn(sel),n={...o,id:uid(),code:o.code+'-copia'};S.nodes.push(n);sel=n.id;panel();draw()}
-function delB(id){S.branches=S.branches.filter(b=>b.id!==id);panel();draw()}
-function delN(){if(sel===S.root&&S.nodes.length>1&&!confirm('Es el nodo raíz. ¿Eliminar?'))return;
- S.branches=S.branches.filter(b=>b.from!==sel);S.branches.forEach(b=>{if(b.to===sel)b.to=null});S.nodes=S.nodes.filter(n=>n.id!==sel);
- if(S.root===sel)S.root=S.nodes[0]?.id;sel=S.root;panel();draw()}
-// ---- JSON / CSV
-function saveJ(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download=(S.zone||'carta')+'.json';a.click()}
-function rd(i,f){const r=new FileReader();r.onload=()=>{try{f(r.result)}catch(e){alert('Error: '+e.message)}i.value=''};r.readAsText(i.files[0])}
-function csv(t){ // columnas: origen,salida,destino,fibra,color,estado,notas
- const L=t.trim().split(/\r?\n/).map(l=>l.split(/[;,]/).map(x=>x.trim()));if(/orig/i.test(L[0][0]))L.shift();
- const M={};const get=c=>M[c]||(M[c]=node(c));const d={title:'Importado CSV',zone:'',date:new Date().toLocaleDateString('es-ES'),summary:'',nodes:[],branches:[]};
- L.forEach(r=>{if(!r[0])return;const a=get(r[0]);const b=r[2]&&!/libre/i.test(r[2])?get(r[2]):null;d.branches.push(br(a.id,b&&b.id,r[1]||'',r[3],r[4],r[5]||r[1],r[6]))});
- d.nodes=Object.values(M);if(!d.nodes.length)throw new Error('CSV vacío');const tos=new Set(d.branches.map(b=>b.to));d.root=(d.nodes.find(n=>!tos.has(n.id))||d.nodes[0]).id;load(d)}
+ m.innerHTML='<div class="bx" style="width:620px"><b>Cambios respecto a la carta original ('+R.length+')</b>'+(Object.keys(by).length?Object.keys(by).map(k=>{const l=by[k],mo=S.mot[k]||{};return '<div class="br"><b>'+esc(l[0].elem)+'</b>'+l.slice(0,8).map(r=>'<div style="font-size:12px">'+r.tipo+' · '+esc(r.campo)+': '+esc(r.antes||'—')+' → '+esc(r.despues||'—')+'</div>').join('')+'<div class="g2"><select data-k="'+k+'" data-f="m">'+MOT.map(v=>'<option'+(v===mo.m?' selected':'')+'>'+v+'</option>').join('')+'</select><input data-k="'+k+'" data-f="n" placeholder="Nota" value="'+esc(mo.n||'')+'"></div></div>'}).join(''):'<p>Sin modificaciones.</p>')+'<div class="row"><button class="p" data-x="1">Cerrar</button></div></div>';
+ m.addEventListener('change',e=>{const k=e.target.dataset.k;if(k)(S.mot[k]=S.mot[k]||{})[e.target.dataset.f]=e.target.value;sv()});
+ m.onclick=e=>{if(e.target.dataset.x||e.target===m)m.remove()};document.body.appendChild(m)}
+// ---- dibujo
+const pt=e=>{const n=gn(e.n),i=n?n.rows.findIndex(r=>r.id===e.r):-1;return i<0?null:{x:n.x+(e.s==='r'?W:0),y:n.y+HD+2+i*RH+13.5}};
+function cabSvg(){let o='';S.cables.forEach(c=>{const p=pt(c.a),q=pt(c.b);if(!p||!q)return;const col=(FC[c.cap]||[0,'#8a8f98'])[1],dx=Math.max(50,Math.abs(q.x-p.x)/2),
+ d=`M${p.x},${p.y} C${p.x+(c.a.s==='r'?dx:-dx)},${p.y} ${q.x+(c.b.s==='r'?dx:-dx)},${q.y} ${q.x},${q.y}`,mx=(p.x+q.x)/2,my=(p.y+q.y)/2;
+ if(CM[c.id])o+=`<path d="${d}" fill="none" stroke="#ff6d00" stroke-width="8" opacity=".45"/>`;
+ if(col==='#cfd3d8')o+=`<path d="${d}" fill="none" stroke="#8a8f98" stroke-width="5.5"/>`;
+ o+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="3"/><path class="hit" data-c="${c.id}" d="${d}" fill="none" stroke="transparent" stroke-width="14"/><g transform="translate(${mx},${my})"><rect x="-17" y="-8" width="34" height="16" rx="4" fill="#10141c" stroke="${col}"/><text text-anchor="middle" y="4" font-size="10" font-family="Arial" fill="#fff">${(c.cap||'').replace('Fo','f')}</text></g>`});return o}
+const cables=()=>{$('sv').innerHTML=cabSvg()+'<path id="tmp" fill="none" stroke="#fff" stroke-dasharray="4"/>'};
+const dc=(n,r,s)=>{const c=cabAt(n.id,r.id,s);return c?`background:${fcx(c.fc)||'#cfd3d8'}`:''};
+function nodeHtml(n){return `<div class="n${CM[n.id]?' m':''}" data-n="${n.id}" style="left:${n.x}px;top:${n.y}px"><div class="h" style="background:${hc(n)}"><select data-f="type"><option${n.type==='Empalme'?' selected':''}>Empalme</option><option${n.type==='CTO'?' selected':''}>CTO</option></select><input class="${reE.test(n.code)||reC.test(n.code)?'':'bad'}" data-f="code" placeholder="código" value="${esc(n.code)}">${n.type==='Empalme'?`<select data-f="modelo">${Object.keys(MOD).map(m=>`<option${m===n.modelo?' selected':''}>${m}</option>`).join('')}</select>`:''}</div>`+
+ n.rows.map(r=>`<div class="rw"><i class="d l" data-d="${n.id}|${r.id}|l" style="${dc(n,r,'l')}"></i><input data-r="${r.id}" data-s="l" placeholder="entrada" value="${esc(r.l)}"><input data-r="${r.id}" data-s="r" placeholder="salida" value="${esc(r.r)}"><i class="d r" data-d="${n.id}|${r.id}|r" style="${dc(n,r,'r')}"></i></div>`).join('')+
+ '<div class="f"><button data-a="+">+ fila</button><button data-a="-">− fila</button><button data-a="x">✕ elemento</button></div></div>'}
+function render(){CM=changeMap();$('w').innerHTML='<svg id="sv"></svg>'+S.nodes.map(nodeHtml).join('');cables();ap()}
+const ap=()=>$('w').style.transform=`translate(${V.x}px,${V.y}px) scale(${V.k})`;
+function fit(){if(!S.nodes.length)return;const b=S.nodes.map(n=>[n.x,n.y,n.x+W,n.y+nh(n)+24]),x0=Math.min(...b.map(a=>a[0])),y0=Math.min(...b.map(a=>a[1])),x1=Math.max(...b.map(a=>a[2])),y1=Math.max(...b.map(a=>a[3])),w=cv.clientWidth,h=cv.clientHeight;
+ V.k=Math.min(1.2,(w-60)/(x1-x0),(h-60)/(y1-y0));V.x=(w-(x1-x0)*V.k)/2-x0*V.k;V.y=(h-(y1-y0)*V.k)/2-y0*V.k;ap()}
+function addNode(t){pu();const r=cv.getBoundingClientRect(),n=nodeNew(t,'',(r.width/2-V.x)/V.k-W/2,(r.height/2-V.y)/V.k-40);S.nodes.push(n);render();sv()}
+// ---- interacción
+const wp=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left-V.x)/V.k,y:(e.clientY-r.top-V.y)/V.k}};
+cv.addEventListener('pointerdown',e=>{const t=e.target,d=t.closest('[data-d]'),h=t.closest('.h');
+ if(d){e.preventDefault();const[n,r,s]=d.dataset.d.split('|');con={n,r,s};cv.setPointerCapture(e.pointerId);return}
+ if(h&&!/INPUT|SELECT/.test(t.tagName)){const n=gn(h.closest('.n').dataset.n),p=wp(e);dr={n,ox:p.x-n.x,oy:p.y-n.y,mv:0};cv.setPointerCapture(e.pointerId);return}
+ if(t.closest('.n')||t.classList.contains('hit'))return;pan={x:e.clientX-V.x,y:e.clientY-V.y};cv.setPointerCapture(e.pointerId)});
+cv.addEventListener('pointermove',e=>{
+ if(dr){if(!dr.mv){pu();dr.mv=1}const p=wp(e);dr.n.x=Math.round(p.x-dr.ox);dr.n.y=Math.round(p.y-dr.oy);const el=document.querySelector(`[data-n="${dr.n.id}"]`);el.style.left=dr.n.x+'px';el.style.top=dr.n.y+'px';cables()}
+ else if(pan){V.x=e.clientX-pan.x;V.y=e.clientY-pan.y;ap()}
+ else if(con){const a=pt(con),q=wp(e),t=$('tmp');if(a&&t)t.setAttribute('d',`M${a.x},${a.y} L${q.x},${q.y}`)}});
+cv.addEventListener('pointerup',e=>{
+ if(con){const t=document.elementFromPoint(e.clientX,e.clientY),d=t&&t.closest&&t.closest('[data-d]');
+  if(d){const[n,r,s]=d.dataset.d.split('|');if(!(n===con.n&&r===con.r&&s===con.s)){pu();const dup=(a,b,c)=>S.cables.filter(x=>![x.a,x.b].some(p=>(p.n===a&&p.r===b&&p.s===c)));
+   S.cables=dup(con.n,con.r,con.s);S.cables=S.cables.filter(x=>![x.a,x.b].some(p=>p.n===n&&p.r===r&&p.s===s));
+   S.cables.push({id:uid(),a:{n:con.n,r:con.r,s:con.s},b:{n,r,s},cap:'12Fo',fc:'',note:''});render();sv()}}else cables()}
+ if(dr&&dr.mv)sv();con=dr=pan=null});
+cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,k=Math.min(3,Math.max(.15,V.k*(e.deltaY<0?1.12:.89)));V.x=mx-(mx-V.x)*k/V.k;V.y=my-(my-V.y)*k/V.k;V.k=k;ap()},{passive:false});
+$('w').addEventListener('change',e=>{const t=e.target,nd=t.closest('.n');if(!nd)return;const n=gn(nd.dataset.n);pu();
+ if(t.dataset.f){n[t.dataset.f]=t.value;if(t.dataset.f==='code'){t.classList.toggle('bad',!(reE.test(n.code)||reC.test(n.code)));nd.classList.toggle('m',!!changeMap()[n.id]);sv()}else{render();sv()}}
+ else if(t.dataset.r){n.rows.find(r=>r.id===t.dataset.r)[t.dataset.s]=t.value;nd.classList.toggle('m',!!changeMap()[n.id]);sv()}});
+$('w').addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c){editCable(c.dataset.c);return}
+ const b=e.target.closest('[data-a]');if(!b)return;const n=gn(b.closest('.n').dataset.n),a=b.dataset.a;
+ if(a==='+'){pu();n.rows.push({id:uid(),l:'',r:''})}
+ else if(a==='-'){if(n.rows.length<2)return;pu();const r=n.rows.pop();S.cables=S.cables.filter(c=>![c.a,c.b].some(p=>p.n===n.id&&p.r===r.id))}
+ else{if(!confirm('¿Eliminar '+(n.code||'el elemento')+'?'))return;pu();S.nodes=S.nodes.filter(x=>x!==n);S.cables=S.cables.filter(c=>c.a.n!==n.id&&c.b.n!==n.id)}
+ render();sv()});
+function editCable(id){const c=S.cables.find(x=>x.id===id),m=document.createElement('div');let fc=c.fc;m.className='md';
+ m.innerHTML=`<div class="bx"><b>Cable / fibra</b><label>Capacidad</label><select id="ec">${CABLES.map(v=>`<option${v===c.cap?' selected':''}>${v}</option>`).join('')}</select><label>Color de fibra</label><div id="sw">${FIB.map(f=>`<i data-f="${f}" title="${f}" style="background:${FIBC[f]}${c.fc===f?';outline:2px solid #fff':''}"></i>`).join('')}</div><label>Nota</label><input id="en" value="${esc(c.note)}"><div class="row"><button class="p" data-x="a">Aplicar</button><button data-x="e">Eliminar</button><button data-x="c">Cerrar</button></div></div>`;
+ m.onclick=e=>{const t=e.target;if(t.dataset.f){fc=t.dataset.f;[...$('sw').children].forEach(i=>i.style.outline=i.dataset.f===fc?'2px solid #fff':'')}
+  else if(t.dataset.x==='a'){pu();c.cap=$('ec').value;c.fc=fc;c.note=$('en').value;m.remove();render();sv()}
+  else if(t.dataset.x==='e'){pu();S.cables=S.cables.filter(x=>x!==c);m.remove();render();sv()}
+  else if(t.dataset.x==='c'||t===m)m.remove()};document.body.appendChild(m)}
 // ---- PDF
+function svgEx(){const bx=S.nodes.map(n=>[n.x,n.y,n.x+W,n.y+nh(n)]),x0=Math.min(...bx.map(b=>b[0]))-30,y0=Math.min(...bx.map(b=>b[1]))-30,w=Math.max(Math.max(...bx.map(b=>b[2]))+30-x0,900),h=Math.max(...bx.map(b=>b[3]))+60-y0;let o=cabSvg().replace(/<path class="hit"[^>]*>/g,'');
+ S.nodes.forEach(n=>{const c=hc(n);o+=`<rect x="${n.x}" y="${n.y}" width="${W}" height="${nh(n)}" rx="8" fill="#f4f7fb" stroke="${CM[n.id]?'#ff6d00':c}" stroke-width="${CM[n.id]?3:2}"/><rect x="${n.x}" y="${n.y}" width="${W}" height="${HD}" rx="8" fill="${c}"/><text x="${n.x+8}" y="${n.y+20}" fill="#fff" font-size="13" font-weight="bold" font-family="Arial">${esc(n.code)} · ${n.type==='CTO'?'CTO':esc(n.modelo)}</text>`;
+  n.rows.forEach((r,i)=>{const y=n.y+HD+i*RH;o+=`<line x1="${n.x}" x2="${n.x+W}" y1="${y}" y2="${y}" stroke="#ccd3de"/><text x="${n.x+8}" y="${y+17}" font-size="11" font-family="Arial" fill="#111">${esc(r.l)}</text><text x="${n.x+W-8}" y="${y+17}" font-size="11" font-family="Arial" fill="#111" text-anchor="end">${esc(r.r)}</text>`;
+   ['l','r'].forEach(s=>{const k=cabAt(n.id,r.id,s);if(k)o+=`<circle cx="${n.x+(s==='r'?W:0)}" cy="${y+13.5}" r="5" fill="${fcx(k.fc)||'#cfd3d8'}" stroke="#333"/>`})})});
+ o+=`<text x="${x0+30}" y="${y0+h-14}" font-size="11" font-family="Arial" fill="#445">Cables:</text>`+Object.keys(FC).map((k,i)=>`<rect x="${x0+80+i*92}" y="${y0+h-22}" width="22" height="8" rx="3" fill="${FC[k][1]}" stroke="#8a8f98"/><text x="${x0+106+i*92}" y="${y0+h-14}" font-size="11" font-family="Arial" fill="#445">${k}</text>`).join('');
+ return {s:`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="${x0} ${y0} ${w} ${h}"><rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="#fff"/>${o}</svg>`,w,h}}
+const peer=(n,r,s)=>{const c=cabAt(n.id,r.id,s);if(!c)return '';const o=(c.a.n===n.id&&c.a.r===r.id&&c.a.s===s)?c.b:c.a,m=gn(o.n),q=m&&m.rows.find(x=>x.id===o.r);return (m?m.code:'?')+' '+(q?(q[o.s]||'#'+(m.rows.indexOf(q)+1)):'')+' ['+(c.cap||'')+(c.fc?' '+c.fc:'')+']'};
 async function pdf(){
  const {jsPDF}=window.jspdf,d=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
- d.setFontSize(18);d.text(S.title||'Carta de empalme',14,16);d.setFontSize(10);
- const r=gn(S.root);d.text(`Fecha: ${S.date||''}    PON: ${S.pon||'-'}    Árbol: ${S.arbol||'-'}    Zona: ${S.zone||''}    Fusionador: ${S.fus||'-'}    Rev.: ${S.rev||'-'}    Raíz: ${r?r.code+' ('+tp(r)+')':'-'}`,14,23);
- const nE=S.nodes.filter(n=>tp(n)==='Empalme').length,nC=S.nodes.length-nE;
- d.text(d.splitTextToSize(`${S.summary||''}  [${nE} empalmes, ${nC} CTOs, ${S.branches.length} ramas]`,265),14,29);
- if(LOGO)d.addImage(LOGO,'PNG',250,6,35,14);
- const {html,w,h,pos}=build(true);const anc=[];let cc=S.root;for(;;){const bb=S.branches.find(x=>x.to===cc&&gn(x.from)&&x.from!==S.root&&!anc.includes(x.from));if(!bb)break;anc.push(bb.from);cc=bb.from}
- const dsc={[S.root]:1};for(let ch=true;ch;){ch=false;S.branches.forEach(x=>{if(dsc[x.from]&&x.to&&!dsc[x.to]){dsc[x.to]=dsc[x.from]+1;ch=true}})}
- const lv=id=>dsc[id]||(anc.includes(id)?'Alim. '+(anc.indexOf(id)+1):'Rama alim.');
- const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><rect width="100%" height="100%" fill="#fff"/>${html}</svg>`;
- const img=new Image();await new Promise((ok,ko)=>{img.onload=ok;img.onerror=ko;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg)});
- const c=document.createElement('canvas');c.width=w*2;c.height=h*2;const x=c.getContext('2d');x.scale(2,2);x.drawImage(img,0,0,w,h);
- const mw=269,mh=146,k=Math.min(mw/w,mh/h);d.addImage(c.toDataURL('image/png'),'PNG',14,44,w*k,h*k);
- d.addPage();d.setFontSize(13);d.text('Inventario de elementos',14,14);
- d.autoTable({startY:18,head:[['Código','Tipo','Modelo','Nivel','Cabecera/zona','Cable entrada','Cable salida','Nº salidas','Observaciones']],
-  didParseCell:q=>{if(q.section==='body'&&q.column.index===2&&MC[q.cell.raw]){q.cell.styles.fillColor=MC[q.cell.raw][1];q.cell.styles.textColor=255}},body:S.nodes.map(n=>[n.code,tp(n),tp(n)==='Empalme'?mod(n):'',lv(n.id),n.label,n.cableIn,n.cableOut,S.branches.filter(b=>b.from===n.id).length,n.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]}});
- const nm=id=>id?gn(id)?.code:'LIBRE';
- d.setFontSize(13);d.text('Inventario de cables / ramas',14,d.lastAutoTable.finalY+10);
- d.autoTable({startY:d.lastAutoTable.finalY+14,head:[['Origen','Salida/puerto','Destino','Fibra','Color','Estado','Notas']],
-  body:S.branches.map(b=>[nm(b.from),b.port,nm(b.to),b.fiber,cinfo(b)[0],b.status,b.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]},
-  didParseCell:q=>{if(q.section==='body'&&q.column.index===4&&COL[q.cell.raw]){q.cell.styles.fillColor=COL[q.cell.raw];q.cell.styles.textColor=['amarillo','blanco'].includes(q.cell.raw)?0:255}}});
- d.addPage();d.setFontSize(13);d.text('Carta de empalme (formato DIGI) · orden de fusión sugerido',14,14);let yy=20;
- S.nodes.slice().sort((a,b)=>(dsc[a.id]||99)-(dsc[b.id]||99)).forEach((nd,k)=>{const ob=S.branches.filter(b=>b.from===nd.id);if(!ob.length&&!sps(nd).length)return;
-  if(yy>170){d.addPage();yy=14}
-  d.setFontSize(11);d.setFont(undefined,'bold');d.text(`${k+1}. ${nd.code}  ${tp(nd)==='Empalme'?mod(nd):'CTO'}${nd.zona?'  ·  Zona '+nd.zona:''}${tpx(nd.code)?'  ·  TX (TP)':''}   Cable ent.: ${nd.cableIn||'-'}  sal.: ${nd.cableOut||'-'}`,14,yy);d.setFont(undefined,'normal');
-  d.autoTable({startY:yy+2,head:[['Salida','Origen','Fibra','Destino','Cable','Tubo / capa','AMP']],body:[...sps(nd).map(s=>['Splitter',spIn(nd,s)+' · '+spLabel(nd,s),'Entrada: '+(s.fiberIn||'-'),'','','','']),...ob.map(b=>[b.port,orig(nd,b),b.fc||'',nm(b.to),b.fiber,[b.tubo,b.capa].filter(Boolean).join(' · '),b.amp?'AMP':''])],styles:{fontSize:8},headStyles:{fillColor:[30,102,208]},margin:{left:14,right:14},
-   didParseCell:q=>{if(q.section==='body'&&q.column.index===2){const hx=fcHex(q.cell.raw);if(hx){q.cell.styles.fillColor=hx;q.cell.styles.textColor=/^(amarillo|blanco)/.test(q.cell.raw)?0:255}}}});
-  yy=d.lastAutoTable.finalY+8});
+ d.setFontSize(18);d.text(S.title||'Carta de empalme',14,16);d.setFontSize(9);d.text(`Fecha: ${S.date||''}   PON: ${S.pon||'-'}   Árbol: ${S.arbol||'-'}   Zona: ${S.zone||''}   Fusionador: ${S.fus||'-'}   Rev.: ${S.rev||'-'}`,14,23);
+ const sx=svgEx(),img=new Image();await new Promise((ok,ko)=>{img.onload=ok;img.onerror=ko;img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(sx.s)});
+ const c=document.createElement('canvas');c.width=sx.w*2;c.height=sx.h*2;const x=c.getContext('2d');x.scale(2,2);x.drawImage(img,0,0,sx.w,sx.h);
+ const k=Math.min(269/sx.w,165/sx.h);d.addImage(c.toDataURL('image/png'),'PNG',14,28,sx.w*k,sx.h*k);
+ d.addPage();d.setFontSize(13);d.text('Carta de elementos: entradas, salidas y conexiones',14,14);let yy=20;
+ S.nodes.slice().sort((a,b)=>a.x-b.x||a.y-b.y).forEach(n=>{if(yy>165){d.addPage();yy=14}
+  d.autoTable({startY:yy,head:[[{content:`${n.code||'(sin código)'} · ${n.type==='CTO'?'CTO':n.modelo}`,colSpan:4,styles:{fillColor:hc(n).replace('#','').match(/../g).map(v=>parseInt(v,16))}}],['Entrada','Viene de','Salida','Va a']],body:n.rows.map(r=>[r.l,peer(n,r,'l'),r.r,peer(n,r,'r')]),styles:{fontSize:8},margin:{left:14,right:14}});yy=d.lastAutoTable.finalY+7});
  {const CH=diff();d.addPage();d.setFontSize(13);d.text('Hoja de modificaciones respecto a la carta original',14,14);d.setFontSize(9);
- d.text(`PON: ${S.pon||'-'}   Árbol: ${S.arbol||'-'}   Fusionador: ${S.fus||'-'}   Revisión: ${S.rev||'-'}   Original fijada: ${S.baseDate||'-'}   Fecha: ${S.date||''}`,14,20);let fy=32;
- if(!S.base)d.text('No hay carta original fijada: no se pueden calcular modificaciones.',14,28);
- else if(!CH.length)d.text('Sin modificaciones respecto a la carta original.',14,28);
- else{d.autoTable({startY:24,head:[['Elemento','Cambio','Campo','Antes','Después','Motivo','Nota']],body:CH.map(r=>[r.elem,r.tipo,r.campo,r.antes,r.despues,(S.mot[r.key]||{}).m||'',(S.mot[r.key]||{}).n||'']),styles:{fontSize:8},headStyles:{fillColor:[240,140,0]},margin:{left:14,right:14}});fy=d.lastAutoTable.finalY+14}
- if(fy<190)d.text('Revisado por: ______________________     Fecha: ____________',14,fy)}
- const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFontSize(8);d.text(`${S.zone||''} · página ${i}/${n}`,14,203)}
- d.save((S.zone||'carta')+'_empalme.pdf');
+  d.text(`PON: ${S.pon||'-'}   Árbol: ${S.arbol||'-'}   Fusionador: ${S.fus||'-'}   Revisión: ${S.rev||'-'}   Original fijada: ${S.baseDate||'-'}   Fecha: ${S.date||''}`,14,20);let fy=32;
+  if(!S.base)d.text('No hay carta original fijada: no se pueden calcular modificaciones.',14,28);
+  else if(!CH.length)d.text('Sin modificaciones respecto a la carta original.',14,28);
+  else{d.autoTable({startY:24,head:[['Elemento','Cambio','Campo','Antes','Después','Motivo','Nota']],body:CH.map(r=>[r.elem,r.tipo,r.campo,r.antes,r.despues,(S.mot[r.key]||{}).m||'',(S.mot[r.key]||{}).n||'']),styles:{fontSize:8},headStyles:{fillColor:[240,140,0]},margin:{left:14,right:14}});fy=d.lastAutoTable.finalY+14}
+  if(fy<190)d.text('Revisado por: ______________________     Fecha: ____________',14,fy)}
+ const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFontSize(8);d.text(`${S.pon||S.zone||''} · página ${i}/${n}`,14,203)}
+ d.save((S.pon||S.zone||'carta')+'_empalme.pdf');
 }
-load(example());addEventListener('resize',fit);
+//INIT
+try{const t=localStorage.getItem('cfusion');load(t?JSON.parse(t):example())}catch(e){load(example())}
+addEventListener('resize',fit);
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('inst').hidden=false});
 $('inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('inst').hidden=true};
 addEventListener('appinstalled',()=>$('inst').hidden=true);
