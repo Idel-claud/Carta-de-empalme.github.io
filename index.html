@@ -41,15 +41,39 @@ function cs(v,f){const l=!v||CABLES.includes(v)?CABLES:[...CABLES,v];return `<se
 const FC={'12Fo':['azul','#1e66d0'],'24Fo':['verde','#43a047'],'48Fo':['rojo','#e53935'],'96Fo':['amarillo','#f2c200'],'144Fo':['naranja','#fb8c00'],'192Fo':['marrón','#795548'],'288Fo':['blanco','#cfd3d8'],'576Fo':['violeta','#8e24aa']};
 const cinfo=b=>{const m=/^\s*(\d+)\s*f/i.exec(b.fiber||''),k=m?m[1]+'Fo':'';return FC[k]||[b.color||'',COL[b.color]||'#8a8f98']};
 function fsel(b){const v=b.fiber,l=!v||CABLES.includes(v)?CABLES:[...CABLES,v];return `<select onchange="setB('${b.id}','fiber',this.value);panel()"><option value="">—</option>`+l.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')+'</select>'}
+const RATIOS=['1:2','1:3','1:4','1:6','1:8','1:12'],FIB=['rojo','verde','amarillo','azul','naranja','marrón','blanco','violeta','rosa','turquesa','gris','negro'],FIBOPT=[...FIB,...FIB.map(c=>c+' (anillo)')];
+const FIBC={rojo:'#e53935',verde:'#43a047',amarillo:'#f2c200',azul:'#1e66d0',naranja:'#fb8c00','marrón':'#8d4b1f',blanco:'#eee',violeta:'#8e24aa',rosa:'#f48fb1',turquesa:'#1fb5ad',gris:'#9e9e9e',negro:'#222'},SC={SN1:'#e53935',SN2:'#1e66d0',SN3:'#43a047'};
+const fcHex=v=>FIBC[(v||'').replace(' (anillo)','')]||'';
+const reE=/^(?:[A-Z]{3})?\d{2}E\d{4}$/i,reC=/^\d{6}[A-Z]?$/i,tpx=c=>/^[A-Z]{3}\d{2}E\d{4}$/i.test(c||'');
+const sps=n=>n.splitters||[];
+const spLabel=(n,s)=>`${s.nivel} - ${n.zona||S.zone||'Zxx.x'} - 1:${String(s.ratio.split(':')[1]).padStart(2,'0')}`;
+const orig=(n,b)=>{const s=sps(n).find(x=>x.id===b.sp);return s?spLabel(n,s):'Fibra directa'};
+const fcs=(v,hd)=>`<select onchange="${hd}"><option value="">—</option>`+FIBOPT.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')+'</select>';
+function warns(n){const w=[],c=n.code||'';
+ if(!reE.test(c)&&!reC.test(c))w.push('Código fuera de formato (LLECCCC, PPPLLECCCC o LLCCCC).');
+ if(tpx(c))w.push('Empalme TX: solo con trabajo programado (TP).');
+ const out=S.branches.filter(b=>b.from===n.id);
+ sps(n).forEach(s=>{const k=+s.ratio.split(':')[1],u=out.filter(b=>b.sp===s.id).length;if(u>k)w.push(`${s.nivel} ${s.ratio}: ${u} salidas usadas, máximo ${k}.`)});
+ const g={};out.forEach(b=>{if(b.to)(g[b.to]=g[b.to]||[]).push(b)});
+ Object.keys(g).forEach(t=>{const l=g[t],cap=parseInt(l[0].fiber)||0,d=(gn(t)||{}).code,s={};
+  if(cap&&l.length>cap)w.push(`Hacia ${d}: ${l.length} fibras en un cable de ${cap}.`);
+  l.forEach(b=>{if(b.fc){if(s[b.fc])w.push(`Fibra ${b.fc} repetida hacia ${d}.`);s[b.fc]=1}})});
+ return w}
+const warnHtml=n=>{const w=warns(n);return w.length?`<div class="br" style="border-color:#f2a900">⚠ ${w.map(esc).join('<br>⚠ ')}</div>`:''};
+function spHtml(n){return `<label>Zona PON (carta)</label><input value="${esc(n.zona||'')}" oninput="setN('zona',this.value)"><h3>Splitters (${sps(n).length})</h3>`+sps(n).map((s,i)=>`<div class="br"><div class="g2"><div><label>Nivel</label><select onchange="setSp(${i},'nivel',this.value);panel()">${['SN1','SN2','SN3'].map(v=>`<option ${v===s.nivel?'selected':''}>${v}</option>`).join('')}</select></div><div><label>Relación</label><select onchange="setSp(${i},'ratio',this.value);panel()">${RATIOS.map(v=>`<option ${v===s.ratio?'selected':''}>${v}</option>`).join('')}</select></div></div><label>Fibra de entrada</label>${fcs(s.fiberIn,`setSp(${i},'fiberIn',this.value)`)}<div class="row"><span style="color:var(--mu)">${esc(spLabel(n,s))}</span><button class="d" onclick="delSp(${i})">Quitar</button></div></div>`).join('')+'<div class="row"><button onclick="addSp()">+ Splitter</button></div>'}
+const bsel=(b,n)=>`<select onchange="setB('${b.id}','sp',this.value)"><option value="">Fibra directa</option>`+sps(n).map(s=>`<option value="${s.id}" ${s.id===b.sp?'selected':''}>${s.nivel} ${s.ratio}</option>`).join('')+'</select>';
+function addSp(){const n=gn(sel);(n.splitters=n.splitters||[]).push({id:uid(),nivel:'SN1',ratio:'1:6',fiberIn:''});panel();draw()}
+function setSp(i,k,v){gn(sel).splitters[i][k]=v;draw()}
+function delSp(i){const n=gn(sel),s=n.splitters.splice(i,1)[0];S.branches.forEach(b=>{if(b.sp===s.id)b.sp=''});panel();draw()}
 const LOGO=null; // Para tu logo: pega aquí un dataURL PNG ('data:image/png;base64,...')
 let S,sel=null,V={k:1,x:0,y:0},seq=1;
 const uid=()=>'n'+(seq++)+Math.random().toString(36).slice(2,5);
 const gn=id=>S.nodes.find(n=>n.id===id);
-const classify=c=>/e/i.test(c)?'Empalme':/^\d{6}$/.test(c)?'CTO':'Empalme';
+const classify=c=>reE.test(c)?'Empalme':reC.test(c)?'CTO':'Empalme';
 const tp=n=>n.typeSel&&n.typeSel!=='auto'?n.typeSel:classify(n.code);
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function node(code,o={}){return {id:uid(),code,typeSel:'auto',modelo:'HTSC 206',label:'',cableIn:'',cableOut:'',notes:'',...o}}
-function br(from,to,port,fiber,color,status,notes){return {id:uid(),from,to,port,fiber:fiber||'',color:color||'',status:status||port,notes:notes||''}}
+function br(from,to,port,fiber,color,status,notes){return {id:uid(),from,to,sp:'',fc:'',port,fiber:fiber||'',color:color||'',status:status||port,notes:notes||''}}
 function example(){
  const r=node('01E0486',{label:'H8.1',modelo:'HTSC512',cableIn:'144Fo',cableOut:'96Fo',notes:'Empalme principal'});
  const e=node('01E0358',{modelo:'HTSC 206',cableIn:'48Fo',cableOut:'24Fo'});
@@ -57,6 +81,7 @@ function example(){
  const B=[br(r.id,c[0].id,'OUT1','12Fo','rojo'),br(r.id,c[1].id,'OUT2','12Fo','verde'),br(r.id,e.id,'OUT3','24Fo','violeta'),
  br(e.id,c[2].id,'IN S06','12Fo','rosa'),br(e.id,c[3].id,'IN S12','12Fo','turquesa'),br(e.id,c[4].id,'IN S03','12Fo','rojo'),br(e.id,c[5].id,'IN S04','12Fo','verde'),
  br(r.id,c[6].id,'OUT4','12Fo','rosa'),br(r.id,c[7].id,'OUT5','12Fo','turquesa'),br(r.id,null,'OUT6','','','LIBRE')];
+ r.zona='H8.1';r.splitters=[{id:'spA',nivel:'SN1',ratio:'1:6',fiberIn:'rojo'}];B.filter(b=>b.from===r.id).forEach((b,i)=>{b.sp='spA';b.fc=['rojo','verde','amarillo','azul','naranja','rosa'][i]});
  return {title:'Carta de empalme',zone:'H8.1',date:new Date().toLocaleDateString('es-ES'),summary:'Empalme principal con 6 salidas, 1 sub-empalme y 8 CTOs.',root:r.id,nodes:[r,e,...c],branches:B};
 }
 function load(d){S=d;sel=S.root;['t','z','d','s'].forEach(k=>$('m'+k).value=S[{t:'title',z:'zone',d:'date',s:'summary'}[k]]||'');panel();draw();setTimeout(fit,30)}
@@ -65,23 +90,23 @@ function layout(){
  const ch={};S.branches.forEach(b=>(ch[b.from]=ch[b.from]||[]).push(b));
  const pos={},stubs=[],seen=new Set();let y=0;
  function go(id,d){seen.add(id);const ks=ch[id]||[],ys=[];
-  ks.forEach(b=>{if(b.to&&gn(b.to)&&!seen.has(b.to)){go(b.to,d+1);ys.push(pos[b.to].y)}else{stubs.push({b,x:d+1,y});ys.push(y);y++}});
-  if(!ks.length){pos[id]={x:d,y};y++}else pos[id]={x:d,y:ys.reduce((a,c)=>a+c,0)/ys.length}}
+  ks.forEach(b=>{if(b.to&&gn(b.to)){if(!seen.has(b.to))go(b.to,d+1);if(pos[b.to])ys.push(pos[b.to].y)}else{stubs.push({b,x:d+1,y});ys.push(y);y++}});
+  if(!ys.length){pos[id]={x:d,y};y++}else pos[id]={x:d,y:ys.reduce((a,c)=>a+c,0)/ys.length}}
  const top=id=>{let c=id,g=0;while(g++<300){const b=S.branches.find(x=>x.to===c&&x.from!==c&&gn(x.from));if(!b)break;c=b.from}return c};
  if(gn(S.root))go(top(S.root),0);
  S.nodes.forEach(n=>{if(!seen.has(n.id)){const t=top(n.id);go(seen.has(t)?n.id:t,0)}});
  return {pos,stubs};
 }
-const X=x=>40+x*280,Y=y=>50+y*76,NW=160,NH=50;
+const X=x=>40+x*280,Y=y=>50+y*84,NW=160,NH=62;
 function build(pdf){
  const {pos,stubs}=layout();let h='',mx=0,my=0;const out=[];
- const col=b=>cinfo(b)[1];
+ const col=b=>cinfo(b)[1],cnt={};
  const edge=(x1,y1,x2,y2,b,dash)=>{const m=(x1+x2)/2;
   if(col(b)==='#cfd3d8')out.push(`<path d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}" fill="none" stroke="#8a8f98" stroke-width="5.5"/>`);
   out.push(`<path d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}" fill="none" stroke="${col(b)}" stroke-width="3" ${dash?'stroke-dasharray="6 4"':''}/>`+
-  `<text x="${m}" y="${(y1+y2)/2-6}" font-size="11" text-anchor="middle" fill="#445" font-family="Arial">${esc(b.port)}${b.fiber?' · '+esc(b.fiber):''}</text>`)};
+  `<text x="${m}" y="${(y1+y2)/2-6}" font-size="11" text-anchor="middle" fill="#445" font-family="Arial">${esc(b.port)}${b.fiber?' · '+esc(b.fiber):''}${b.fc?' · '+esc(b.fc):''}</text>`)};
  S.branches.forEach(b=>{const p=pos[b.from];if(!p)return;const q=b.to&&pos[b.to];
-  if(q&&gn(b.to))edge(X(p.x)+NW,Y(p.y)+NH/2,X(q.x),Y(q.y)+NH/2,b);});
+  if(q&&gn(b.to)){const kk=b.from+b.to,dy=((cnt[kk]=(cnt[kk]||0)+1)-1)*9;edge(X(p.x)+NW,Y(p.y)+NH/2+dy,X(q.x),Y(q.y)+NH/2+dy,b)}});
  stubs.forEach(s=>{const p=pos[s.b.from];edge(X(p.x)+NW,Y(p.y)+NH/2,X(s.x),Y(s.y)+NH/2,s.b,true);
   out.push(`<rect x="${X(s.x)}" y="${Y(s.y)+10}" width="90" height="30" rx="15" fill="#fff" stroke="#8a8f98" stroke-dasharray="4 3"/><text x="${X(s.x)+45}" y="${Y(s.y)+29}" font-size="11" text-anchor="middle" fill="#667" font-family="Arial">${esc(s.b.status||'LIBRE')}</text>`);
   mx=Math.max(mx,X(s.x)+90);my=Math.max(my,Y(s.y)+NH)});
@@ -89,7 +114,7 @@ function build(pdf){
   const on=!pdf&&sel===n.id;
   out.push(`<g data-n="${n.id}" style="cursor:pointer"><rect x="${X(p.x)}" y="${Y(p.y)}" width="${NW}" height="${NH}" rx="8" fill="${f}" stroke="${on?'#f2a900':s}" stroke-width="${on?4:2}"/>`+
   `<text x="${X(p.x)+10}" y="${Y(p.y)+21}" font-size="14" font-weight="bold" fill="#14202e" font-family="Arial">${esc(n.code)}${n.id===S.root?' ★':''}</text>`+
-  `<text x="${X(p.x)+10}" y="${Y(p.y)+39}" font-size="11" fill="#445" font-family="Arial">${e?esc(mod(n)):'CTO'}${n.label?' · '+esc(n.label):''}</text></g>`);
+  `<text x="${X(p.x)+10}" y="${Y(p.y)+39}" font-size="11" fill="#445" font-family="Arial">${e?esc(mod(n)):'CTO'}${n.label?' · '+esc(n.label):''}</text><text x="${X(p.x)+10}" y="${Y(p.y)+55}" font-size="10" font-weight="bold" font-family="Arial" fill="#a35a00">${tpx(n.code)?'TX ':''}${sps(n).map(s=>`<tspan fill="${SC[s.nivel]}">${s.nivel} ${s.ratio}</tspan>`).join(' ')}</text></g>`);
   mx=Math.max(mx,X(p.x)+NW);my=Math.max(my,Y(p.y)+NH)});
  out.push(`<text x="40" y="${my+34}" font-size="11" font-weight="bold" fill="#445" font-family="Arial">Cables:</text>`);
  Object.keys(FC).forEach((k,i)=>out.push(`<rect x="${100+i*92}" y="${my+26}" width="22" height="8" rx="3" fill="${FC[k][1]}" stroke="#8a8f98"/><text x="${126+i*92}" y="${my+34}" font-size="11" fill="#445" font-family="Arial">${k}</text>`));
@@ -111,17 +136,17 @@ function panel(){
  const bs=S.branches.filter(b=>b.from===n.id);
  const opts=(v)=>`<option value="">— LIBRE (terminal) —</option>`+S.nodes.filter(x=>x.id!==n.id).map(x=>`<option value="${x.id}" ${x.id===v?'selected':''}>${esc(x.code)}</option>`).join('');
  const cols=v=>`<option value=""></option>`+Object.keys(COL).map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('');
- p.innerHTML=`<h3>Nodo</h3><label>Código</label><input value="${esc(n.code)}" oninput="setN('code',this.value)" onchange="panel()">
+ p.innerHTML=`${warnHtml(n)}<h3>Nodo</h3><label>Código</label><input value="${esc(n.code)}" oninput="setN('code',this.value)" onchange="panel()">
  <div class="g2"><div><label>Tipo de elemento (auto → ${classify(n.code)})</label><select onchange="setN('typeSel',this.value);panel()">${['Empalme','CTO','auto'].map(t=>`<option value="${t}" ${t===n.typeSel?'selected':''}>${t==='auto'?'Auto (por código)':t}</option>`).join('')}</select></div>
  <div><label>Cabecera / zona</label><input value="${esc(n.label)}" oninput="setN('label',this.value)"></div></div>
  ${tp(n)==='Empalme'?`<label>Modelo de empalme (solo Empalmes)</label><select onchange="setN('modelo',this.value)">${MODELOS.map(m=>`<option ${m===mod(n)?'selected':''}>${m}</option>`).join('')}</select>`:''}<div class="g2"><div><label>Cable de entrada</label>${cs(n.cableIn,'cableIn')}</div><div><label>Cable de salida</label>${cs(n.cableOut,'cableOut')}</div></div>
  <label>Observaciones</label><textarea rows="2" oninput="setN('notes',this.value)">${esc(n.notes)}</textarea>
  <div class="row">${S.branches.some(b=>b.to===n.id)?'':'<button onclick="addPrev()">+ Anterior (alimenta a este)</button>'}<button onclick="addChild()">+ Hijo</button><button onclick="addBr()">+ Rama</button><button onclick="dup()">Duplicar</button><button onclick="S.root='${n.id}';draw();panel()">★ Raíz</button><button class="d" onclick="delN()">Eliminar</button></div>
- <h3>Ramas de salida (${bs.length})</h3>`+bs.map(b=>`<div class="br"><div class="g2"><div><label>Salida / puerto</label><input value="${esc(b.port)}" oninput="setB('${b.id}','port',this.value)"></div>
+ ${spHtml(n)}<h3>Ramas de salida (${bs.length})</h3>`+bs.map(b=>`<div class="br"><div class="g2"><div><label>Salida / puerto</label><input value="${esc(b.port)}" oninput="setB('${b.id}','port',this.value)"></div>
  <div><label>Destino</label><select onchange="setB('${b.id}','to',this.value||null)">${opts(b.to)}</select></div>
  <div><label>Cable / fibra</label>${fsel(b)}</div>
  <div><label>Color (según cable)</label><div style="padding:5px 0"><span class="sw" style="background:${cinfo(b)[1]}"></span> ${cinfo(b)[0]||'—'}</div></div></div>
- <label>Estado / etiqueta</label><input value="${esc(b.status)}" oninput="setB('${b.id}','status',this.value)"><label>Notas</label><input value="${esc(b.notes)}" oninput="setB('${b.id}','notes',this.value)">
+ <div class="g2"><div><label>Sale de</label>${bsel(b,n)}</div><div><label>Color de fibra</label>${fcs(b.fc,`setB('${b.id}','fc',this.value)`)}</div></div><label>Estado / etiqueta</label><input value="${esc(b.status)}" oninput="setB('${b.id}','status',this.value)"><label>Notas</label><input value="${esc(b.notes)}" oninput="setB('${b.id}','notes',this.value)">
  <div class="row"><button class="d" onclick="delB('${b.id}')">Quitar rama</button></div></div>`).join('')+
  `<datalist id="fl"><option>12Fo<option>24Fo<option>48Fo<option>96Fo<option>144Fo<option>192Fo<option>288Fo<option>576Fo</datalist>`;
 }
@@ -170,6 +195,13 @@ async function pdf(){
  d.autoTable({startY:d.lastAutoTable.finalY+14,head:[['Origen','Salida/puerto','Destino','Fibra','Color','Estado','Notas']],
   body:S.branches.map(b=>[nm(b.from),b.port,nm(b.to),b.fiber,cinfo(b)[0],b.status,b.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]},
   didParseCell:q=>{if(q.section==='body'&&q.column.index===4&&COL[q.cell.raw]){q.cell.styles.fillColor=COL[q.cell.raw];q.cell.styles.textColor=['amarillo','blanco'].includes(q.cell.raw)?0:255}}});
+ d.addPage();d.setFontSize(13);d.text('Carta de empalme (formato DIGI) · orden de fusión sugerido',14,14);let yy=20;
+ S.nodes.slice().sort((a,b)=>(dsc[a.id]||99)-(dsc[b.id]||99)).forEach((nd,k)=>{const ob=S.branches.filter(b=>b.from===nd.id);if(!ob.length&&!sps(nd).length)return;
+  if(yy>170){d.addPage();yy=14}
+  d.setFontSize(11);d.setFont(undefined,'bold');d.text(`${k+1}. ${nd.code}  ${tp(nd)==='Empalme'?mod(nd):'CTO'}${nd.zona?'  ·  Zona '+nd.zona:''}${tpx(nd.code)?'  ·  TX (TP)':''}   Cable ent.: ${nd.cableIn||'-'}  sal.: ${nd.cableOut||'-'}`,14,yy);d.setFont(undefined,'normal');
+  d.autoTable({startY:yy+2,head:[['Salida','Origen','Fibra','Destino','Cable']],body:[...sps(nd).map(s=>['Splitter',spLabel(nd,s),'Entrada: '+(s.fiberIn||'-'),'','']),...ob.map(b=>[b.port,orig(nd,b),b.fc||'',nm(b.to),b.fiber])],styles:{fontSize:8},headStyles:{fillColor:[30,102,208]},margin:{left:14,right:14},
+   didParseCell:q=>{if(q.section==='body'&&q.column.index===2){const hx=fcHex(q.cell.raw);if(hx){q.cell.styles.fillColor=hx;q.cell.styles.textColor=/^(amarillo|blanco)/.test(q.cell.raw)?0:255}}}});
+  yy=d.lastAutoTable.finalY+8});
  const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFontSize(8);d.text(`${S.zone||''} · página ${i}/${n}`,14,203)}
  d.save((S.zone||'carta')+'_empalme.pdf');
 }
