@@ -91,6 +91,7 @@ function build(pdf){
 }
 function draw(){$('g').innerHTML=build().html;ap()}
 const ap=()=>$('g').setAttribute('transform',`translate(${V.x},${V.y}) scale(${V.k})`);
+function fitIfNeeded(){const {w,h}=build(),c=$('cv');if(V.x+w*V.k>c.clientWidth||V.y+h*V.k>c.clientHeight)fit()}
 function fit(){const {w,h}=build(),c=$('cv');V.k=Math.min(c.clientWidth/w,c.clientHeight/h,1.2);V.x=(c.clientWidth-w*V.k)/2;V.y=(c.clientHeight-h*V.k)/2;ap()}
 const sv=$('sv');let drag=null;
 sv.addEventListener('wheel',e=>{e.preventDefault();const r=sv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,k=Math.min(4,Math.max(.15,V.k*(e.deltaY<0?1.12:.89)));
@@ -123,10 +124,10 @@ function setB(id,k,v){S.branches.find(b=>b.id===id)[k]=v;draw()}
 function askType(cb){const m=document.createElement('div');m.className='md';
  m.innerHTML='<div class="bx"><b>¿Qué tipo de elemento es?</b><div class="row"><button class="p" data-t="Empalme">Empalme</button><button class="p" data-t="CTO">CTO</button><button data-t="auto">Auto (por código)</button></div><div class="row"><button data-t="">Cancelar</button></div></div>';
  m.onclick=e=>{const t=e.target.dataset&&e.target.dataset.t;if(t===undefined)return;m.remove();if(t!=='')cb(t)};document.body.appendChild(m)}
-function addRoot(){askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);sel=n.id;panel();draw()})}
-function addBr(){S.branches.push(br(sel,null,'OUT'+(S.branches.filter(b=>b.from===sel).length+1)));panel();draw()}
-function addChild(){const o=sel;askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);S.branches.push(br(o,n.id,'OUT'+(S.branches.filter(b=>b.from===o).length+1)));sel=n.id;panel();draw()})}
-function addPrev(){const n=gn(sel);askType(t=>{const p=node('ANTERIOR',{typeSel:t,cableOut:n.cableIn});S.nodes.push(p);S.branches.push(br(p.id,n.id,'ALIM',n.cableIn,'','ALIM'));sel=p.id;panel();draw();setTimeout(fit,30)})}
+function addRoot(){askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);sel=n.id;panel();draw();fitIfNeeded()})}
+function addBr(){S.branches.push(br(sel,null,'OUT'+(S.branches.filter(b=>b.from===sel).length+1)));panel();draw();fitIfNeeded()}
+function addChild(){const o=sel;askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);S.branches.push(br(o,n.id,'OUT'+(S.branches.filter(b=>b.from===o).length+1)));sel=n.id;panel();draw();fitIfNeeded()})}
+function addPrev(){const n=gn(sel);askType(t=>{const p=node('ANTERIOR',{typeSel:t,cableOut:n.cableIn});S.nodes.push(p);S.branches.push(br(p.id,n.id,'ALIM',n.cableIn,'','ALIM'));sel=p.id;panel();draw();fitIfNeeded()})}
 function dup(){const o=gn(sel),n={...o,id:uid(),code:o.code+'-copia'};S.nodes.push(n);sel=n.id;panel();draw()}
 function delB(id){S.branches=S.branches.filter(b=>b.id!==id);panel();draw()}
 function delN(){if(sel===S.root&&S.nodes.length>1&&!confirm('Es el nodo raíz. ¿Eliminar?'))return;
@@ -170,5 +171,5 @@ load(example());addEventListener('resize',fit);
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('inst').hidden=false});
 $('inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('inst').hidden=true};
 addEventListener('appinstalled',()=>$('inst').hidden=true);
-if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator)addEventListener('load',()=>{navigator.serviceWorker.register('sw.js').catch(()=>{});navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!window.__r){window.__r=1;location.reload()}})});
 </script></body></html>
