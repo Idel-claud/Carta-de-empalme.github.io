@@ -38,6 +38,9 @@ const MODELOS=['HTSC 206','HTSC512'],CABLES=['12Fo','24Fo','48Fo','96Fo','144Fo'
 const MC={'HTSC 206':['#dbe8ff','#1e66d0'],'HTSC512':['#eadbff','#7b3fc4']};
 const mod=n=>n.modelo||'HTSC 206';
 function cs(v,f){const l=!v||CABLES.includes(v)?CABLES:[...CABLES,v];return `<select onchange="setN('${f}',this.value)"><option value="">—</option>`+l.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')+'</select>'}
+const FC={'12Fo':['azul','#1e66d0'],'24Fo':['verde','#43a047'],'48Fo':['rojo','#e53935'],'96Fo':['amarillo','#f2c200'],'144Fo':['naranja','#fb8c00'],'192Fo':['marrón','#795548'],'288Fo':['blanco','#cfd3d8'],'576Fo':['violeta','#8e24aa']};
+const cinfo=b=>{const m=/^\s*(\d+)\s*f/i.exec(b.fiber||''),k=m?m[1]+'Fo':'';return FC[k]||[b.color||'',COL[b.color]||'#8a8f98']};
+function fsel(b){const v=b.fiber,l=!v||CABLES.includes(v)?CABLES:[...CABLES,v];return `<select onchange="setB('${b.id}','fiber',this.value);panel()"><option value="">—</option>`+l.map(c=>`<option ${c===v?'selected':''}>${c}</option>`).join('')+'</select>'}
 const LOGO=null; // Para tu logo: pega aquí un dataURL PNG ('data:image/png;base64,...')
 let S,sel=null,V={k:1,x:0,y:0},seq=1;
 const uid=()=>'n'+(seq++)+Math.random().toString(36).slice(2,5);
@@ -72,8 +75,9 @@ function layout(){
 const X=x=>40+x*280,Y=y=>50+y*76,NW=160,NH=50;
 function build(pdf){
  const {pos,stubs}=layout();let h='',mx=0,my=0;const out=[];
- const col=b=>COL[b.color]||'#8a8f98';
+ const col=b=>cinfo(b)[1];
  const edge=(x1,y1,x2,y2,b,dash)=>{const m=(x1+x2)/2;
+  if(col(b)==='#cfd3d8')out.push(`<path d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}" fill="none" stroke="#8a8f98" stroke-width="5.5"/>`);
   out.push(`<path d="M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}" fill="none" stroke="${col(b)}" stroke-width="3" ${dash?'stroke-dasharray="6 4"':''}/>`+
   `<text x="${m}" y="${(y1+y2)/2-6}" font-size="11" text-anchor="middle" fill="#445" font-family="Arial">${esc(b.port)}${b.fiber?' · '+esc(b.fiber):''}</text>`)};
  S.branches.forEach(b=>{const p=pos[b.from];if(!p)return;const q=b.to&&pos[b.to];
@@ -87,7 +91,9 @@ function build(pdf){
   `<text x="${X(p.x)+10}" y="${Y(p.y)+21}" font-size="14" font-weight="bold" fill="#14202e" font-family="Arial">${esc(n.code)}${n.id===S.root?' ★':''}</text>`+
   `<text x="${X(p.x)+10}" y="${Y(p.y)+39}" font-size="11" fill="#445" font-family="Arial">${e?esc(mod(n)):'CTO'}${n.label?' · '+esc(n.label):''}</text></g>`);
   mx=Math.max(mx,X(p.x)+NW);my=Math.max(my,Y(p.y)+NH)});
- return {html:out.join(''),w:mx+40,h:my+40,pos};
+ out.push(`<text x="40" y="${my+34}" font-size="11" font-weight="bold" fill="#445" font-family="Arial">Cables:</text>`);
+ Object.keys(FC).forEach((k,i)=>out.push(`<rect x="${100+i*92}" y="${my+26}" width="22" height="8" rx="3" fill="${FC[k][1]}" stroke="#8a8f98"/><text x="${126+i*92}" y="${my+34}" font-size="11" fill="#445" font-family="Arial">${k}</text>`));
+ return {html:out.join(''),w:Math.max(mx,850)+40,h:my+60,pos};
 }
 function draw(){$('g').innerHTML=build().html;ap()}
 const ap=()=>$('g').setAttribute('transform',`translate(${V.x},${V.y}) scale(${V.k})`);
@@ -113,8 +119,8 @@ function panel(){
  <div class="row">${S.branches.some(b=>b.to===n.id)?'':'<button onclick="addPrev()">+ Anterior (alimenta a este)</button>'}<button onclick="addChild()">+ Hijo</button><button onclick="addBr()">+ Rama</button><button onclick="dup()">Duplicar</button><button onclick="S.root='${n.id}';draw();panel()">★ Raíz</button><button class="d" onclick="delN()">Eliminar</button></div>
  <h3>Ramas de salida (${bs.length})</h3>`+bs.map(b=>`<div class="br"><div class="g2"><div><label>Salida / puerto</label><input value="${esc(b.port)}" oninput="setB('${b.id}','port',this.value)"></div>
  <div><label>Destino</label><select onchange="setB('${b.id}','to',this.value||null)">${opts(b.to)}</select></div>
- <div><label>Fibra</label><input list="fl" value="${esc(b.fiber)}" oninput="setB('${b.id}','fiber',this.value)"></div>
- <div><label>Color <span class="sw" style="background:${COL[b.color]||'transparent'}"></span></label><select onchange="setB('${b.id}','color',this.value);panel()">${cols(b.color)}</select></div></div>
+ <div><label>Cable / fibra</label>${fsel(b)}</div>
+ <div><label>Color (según cable)</label><div style="padding:5px 0"><span class="sw" style="background:${cinfo(b)[1]}"></span> ${cinfo(b)[0]||'—'}</div></div></div>
  <label>Estado / etiqueta</label><input value="${esc(b.status)}" oninput="setB('${b.id}','status',this.value)"><label>Notas</label><input value="${esc(b.notes)}" oninput="setB('${b.id}','notes',this.value)">
  <div class="row"><button class="d" onclick="delB('${b.id}')">Quitar rama</button></div></div>`).join('')+
  `<datalist id="fl"><option>12Fo<option>24Fo<option>48Fo<option>96Fo<option>144Fo<option>192Fo<option>288Fo<option>576Fo</datalist>`;
@@ -125,8 +131,8 @@ function askType(cb){const m=document.createElement('div');m.className='md';
  m.innerHTML='<div class="bx"><b>¿Qué tipo de elemento es?</b><div class="row"><button class="p" data-t="Empalme">Empalme</button><button class="p" data-t="CTO">CTO</button><button data-t="auto">Auto (por código)</button></div><div class="row"><button data-t="">Cancelar</button></div></div>';
  m.onclick=e=>{const t=e.target.dataset&&e.target.dataset.t;if(t===undefined)return;m.remove();if(t!=='')cb(t)};document.body.appendChild(m)}
 function addRoot(){askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);sel=n.id;panel();draw();fitIfNeeded()})}
-function addBr(){S.branches.push(br(sel,null,'OUT'+(S.branches.filter(b=>b.from===sel).length+1)));panel();draw();fitIfNeeded()}
-function addChild(){const o=sel;askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);S.branches.push(br(o,n.id,'OUT'+(S.branches.filter(b=>b.from===o).length+1)));sel=n.id;panel();draw();fitIfNeeded()})}
+function addBr(){S.branches.push(br(sel,null,'OUT'+(S.branches.filter(b=>b.from===sel).length+1),gn(sel).cableOut));panel();draw();fitIfNeeded()}
+function addChild(){const o=sel;askType(t=>{const n=node('NUEVO',{typeSel:t});S.nodes.push(n);S.branches.push(br(o,n.id,'OUT'+(S.branches.filter(b=>b.from===o).length+1),gn(o).cableOut));sel=n.id;panel();draw();fitIfNeeded()})}
 function addPrev(){const n=gn(sel);askType(t=>{const p=node('ANTERIOR',{typeSel:t,cableOut:n.cableIn});S.nodes.push(p);S.branches.push(br(p.id,n.id,'ALIM',n.cableIn,'','ALIM'));sel=p.id;panel();draw();fitIfNeeded()})}
 function dup(){const o=gn(sel),n={...o,id:uid(),code:o.code+'-copia'};S.nodes.push(n);sel=n.id;panel();draw()}
 function delB(id){S.branches=S.branches.filter(b=>b.id!==id);panel();draw()}
@@ -162,7 +168,7 @@ async function pdf(){
  const nm=id=>id?gn(id)?.code:'LIBRE';
  d.setFontSize(13);d.text('Inventario de cables / ramas',14,d.lastAutoTable.finalY+10);
  d.autoTable({startY:d.lastAutoTable.finalY+14,head:[['Origen','Salida/puerto','Destino','Fibra','Color','Estado','Notas']],
-  body:S.branches.map(b=>[nm(b.from),b.port,nm(b.to),b.fiber,b.color,b.status,b.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]},
+  body:S.branches.map(b=>[nm(b.from),b.port,nm(b.to),b.fiber,cinfo(b)[0],b.status,b.notes]),styles:{fontSize:8},headStyles:{fillColor:[30,102,208]},
   didParseCell:q=>{if(q.section==='body'&&q.column.index===4&&COL[q.cell.raw]){q.cell.styles.fillColor=COL[q.cell.raw];q.cell.styles.textColor=['amarillo','blanco'].includes(q.cell.raw)?0:255}}});
  const n=d.getNumberOfPages();for(let i=1;i<=n;i++){d.setPage(i);d.setFontSize(8);d.text(`${S.zone||''} · página ${i}/${n}`,14,203)}
  d.save((S.zone||'carta')+'_empalme.pdf');
