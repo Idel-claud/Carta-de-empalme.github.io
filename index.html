@@ -6,43 +6,57 @@
 <style>
 :root{--bg:#10141c;--pn:#182030;--tx:#e6ebf2;--mu:#8e9aae;--bd:#2c384c;--ac:#3d8bff}
 @media(prefers-color-scheme:light){:root{--bg:#eef1f6;--pn:#fff;--tx:#1c2430;--mu:#6a7686;--bd:#ccd3de;--ac:#1e66d0}}
-*{box-sizing:border-box}body{margin:0;font:13px system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;display:flex;flex-direction:column}
+*{box-sizing:border-box}body{margin:0;font:13px system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;height:100dvh;display:flex;flex-direction:column}
 button,select,input{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:4px 7px}button{cursor:pointer}button:hover{border-color:var(--ac)}button.p{background:var(--ac);border-color:var(--ac);color:#fff}
 header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;background:var(--pn);border-bottom:1px solid var(--bd)}header b{margin-right:6px}
-#meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:5px;padding:5px 10px;background:var(--pn);border-bottom:1px solid var(--bd)}#meta input{width:100%}
+#meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:5px;padding:5px 10px;background:var(--pn);border-bottom:1px solid var(--bd)}#meta input{width:100%}#bm{display:none}@media(max-width:700px){#meta{display:none}#meta.on{display:grid}#bm{display:inline-block}header{gap:4px;padding:5px 6px}header b{display:none}header button{padding:4px 6px}}
 #cv{flex:1;position:relative;overflow:hidden;background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:20px 20px;touch-action:none;cursor:grab}
 #w{position:absolute;left:0;top:0;transform-origin:0 0}#sv{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}#sv .hit{pointer-events:stroke;cursor:pointer}
-.n{position:absolute;width:200px;background:var(--pn);border:2px solid var(--bd);border-radius:8px;box-shadow:0 3px 10px #0005}.n.m{border-color:#ff6d00}
-.h{height:30px;display:flex;gap:3px;align-items:center;padding:3px 4px;border-radius:5px 5px 0 0;cursor:move;color:#fff}.h input,.h select{padding:1px 3px;font-size:12px;background:#0003;color:#fff;border-color:#fff3;min-width:0}.h select{max-width:78px}.h input{width:72px;font-weight:700}
-.rw{height:26px;display:flex;position:relative;border-top:1px solid var(--bd)}.rw input{flex:1;width:50%;border:0;border-radius:0;background:transparent;padding:2px 8px;font-size:12px;min-width:0}.rw input+input{text-align:right;border-left:1px solid var(--bd)}
-.d{position:absolute;top:8px;width:11px;height:11px;border-radius:50%;background:#7a8597;border:2px solid var(--pn);cursor:crosshair;z-index:2}.d.l{left:-8px}.d.r{right:-8px}.d:hover{transform:scale(1.5)}
-.f{display:flex;gap:4px;padding:3px 4px;border-top:1px solid var(--bd)}.f button{padding:0 6px;font-size:11px}.bad{outline:1px solid #e53935}
-.md{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9}.bx{background:var(--pn);padding:14px;border-radius:10px;border:1px solid var(--bd);width:380px;max-width:94%;max-height:88vh;overflow:auto}.bx label{display:block;margin-top:8px;color:var(--mu);font-size:12px}.bx select,.bx input{width:100%}
-.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.br{border:1px solid var(--bd);border-radius:8px;padding:8px;margin:8px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}#sw i{display:inline-block;width:22px;height:22px;border-radius:50%;margin:2px;cursor:pointer;border:1px solid #fff4}
+.n{position:absolute;background:var(--pn);border:2px solid var(--bd);border-radius:8px;box-shadow:0 3px 10px #0005}.n.m{border-color:#ff6d00}
+.h{height:32px;display:flex;gap:4px;align-items:center;padding:3px 5px;border-radius:5px 5px 0 0;cursor:move;color:#fff;white-space:nowrap}.h input,.h select{padding:1px 4px;font-size:12px;background:#0003;color:#fff;border-color:#fff4;min-width:0}.h option{color:#111}.h input{font-weight:700}
+.rw{height:28px;display:flex;position:relative;border-top:1px solid var(--bd)}.rw input{flex:1;width:50%;border:0;border-radius:0;background:transparent;padding:2px 9px;font-size:13px;min-width:0}.rw input+input{text-align:right;border-left:1px solid var(--bd)}
+.d{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:#7a8597;border:2px solid var(--pn);cursor:crosshair;z-index:2}.d.l{left:-8px}.d.r{right:-8px}.d:hover{box-shadow:0 0 0 4px #3d8bff66}
+@media(pointer:coarse){.d{width:18px;height:18px;margin-top:-9px}.d.l{left:-11px}.d.r{right:-11px}}
+.f{display:flex;gap:4px;padding:3px 4px;border-top:1px solid var(--bd)}.f button{padding:0 6px;font-size:11px}.bad{outline:1px solid #ff5252}
+.md{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9}.bx{background:var(--pn);padding:14px;border-radius:10px;border:1px solid var(--bd);width:400px;max-width:94%;max-height:88vh;overflow:auto}.bx label{display:block;margin-top:8px;color:var(--mu);font-size:12px}.bx select,.bx input{width:100%}
+.row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.br{border:1px solid var(--bd);border-radius:8px;padding:8px;margin:8px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pal i{display:inline-block;width:24px;height:24px;border-radius:50%;margin:2px;cursor:pointer;border:1px solid #fff5;vertical-align:middle}
+#tc{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:6px 8px;z-index:8;box-shadow:0 4px 14px #0007;max-width:96vw;text-align:center}#tc span{color:var(--mu);font-size:12px;margin-right:4px}#tc b{display:inline-block;padding:2px 8px;border:1px solid var(--bd);border-radius:12px;cursor:pointer;font-weight:400;vertical-align:middle}
 </style></head><body>
-<header><b>📡 Cartas de empalme</b><button onclick="addNode('Empalme')">+ Empalme</button><button onclick="addNode('CTO')">+ CTO</button><button onclick="undo()">↶</button><button onclick="redo()">↷</button><button onclick="fit()">Ajustar</button>
-<button onclick="fijar()" title="Guarda la carta tal como te la han dado">📌 Fijar original</button><button id="bch" onclick="showCh()">Cambios</button>
+<header><b>📡 Cartas de empalme</b><button onclick="addNode('Empalme')">+ Empalme</button><button onclick="addNode('CTO')">+ CTO</button><button onclick="undo()">↶</button><button onclick="redo()">↷</button><button onclick="zoom(1.25)">＋</button><button onclick="zoom(.8)">－</button><button onclick="fit()">Ajustar</button>
+<button id="bm" onclick="$('meta').classList.toggle('on');setTimeout(fit,50)">Datos ▾</button><button onclick="fijar()" title="Guarda la carta tal como te la han dado">📌 Fijar original</button><button id="bch" onclick="showCh()">Cambios</button>
 <button onclick="saveJ()">Guardar JSON</button><button onclick="$('fj').click()">Cargar JSON</button><button onclick="if(confirm('¿Cargar el ejemplo? Se pierde el trabajo actual.'))load(example())">Ejemplo</button>
 <button id="inst" class="p" hidden>⬇ Instalar</button><button class="p" onclick="pdf()">Exportar PDF</button><input id="fj" type="file" accept=".json" hidden onchange="rd(this)"></header>
 <div id="meta"><input data-m="title" placeholder="Título"><input data-m="pon" placeholder="PON (ALCOBENDASA1.1)"><input data-m="arbol" placeholder="Árbol"><input data-m="zone" placeholder="Zona / esquema"><input data-m="fus" placeholder="Fusionador"><input data-m="rev" placeholder="Revisión"><input data-m="date" placeholder="Fecha"></div>
 <div id="cv"><div id="w"></div></div>
+<div id="tc" class="pal" hidden><span>Color del texto:</span><b data-c="">Auto</b></div>
 <script>
-const $=i=>document.getElementById(i),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const W=200,HD=30,RH=26,CABLES=['12Fo','24Fo','48Fo','96Fo','144Fo','192Fo','288Fo','512Fo','576Fo'];
+const $=i=>document.getElementById(i),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),cap1=s=>s?s[0].toUpperCase()+s.slice(1):'';
+const HD=32,RH=28,CABLES=['12Fo','24Fo','48Fo','96Fo','144Fo','192Fo','288Fo','512Fo','576Fo'];
 const FC={'12Fo':['azul','#1e66d0'],'24Fo':['verde','#43a047'],'48Fo':['rojo','#e53935'],'96Fo':['amarillo','#f2c200'],'144Fo':['naranja','#fb8c00'],'192Fo':['marrón','#795548'],'288Fo':['blanco','#cfd3d8'],'512Fo':['gris','#8a8f98'],'576Fo':['violeta','#8e24aa']};
 const FIB=['rojo','verde','amarillo','azul','naranja','marrón','blanco','violeta','rosa','turquesa','gris','negro'];
 const FIBC={rojo:'#e53935',verde:'#43a047',amarillo:'#f2c200',azul:'#1e66d0',naranja:'#fb8c00','marrón':'#8d4b1f',blanco:'#eee',violeta:'#8e24aa',rosa:'#f48fb1',turquesa:'#1fb5ad',gris:'#9e9e9e',negro:'#222'};
-const fcx=v=>FIBC[(v||'').toLowerCase().replace(/\s*\*+$/,'').trim().replace('marron','marrón')]||'';
-const MOD={'HTSC 206':'#1e66d0','HTSC512':'#7b3fc4'},reE=/^(?:[A-Z]{3}\d{2,3}|\d{2})E\d{4}$/i,reC=/^\d{6}[A-Z]?$/i;
-let S,H=[],Rd=[],V={k:1,x:40,y:40},CM={},seq=1,con=null,dr=null,pan=null;
-const cv=$('cv'),uid=()=>'i'+(seq++).toString(36)+Math.random().toString(36).slice(2,5),gn=id=>S.nodes.find(n=>n.id===id),hc=n=>n.type==='CTO'?'#2e8b4a':MOD[n.modelo]||MOD['HTSC 206'];
-const nh=n=>HD+n.rows.length*RH+4,cabAt=(n,r,s)=>S.cables.find(c=>[c.a,c.b].some(p=>p.n===n&&p.r===r&&p.s===s));
-function nodeNew(type,code,x,y,rows){return {id:uid(),type,code,modelo:'HTSC 206',x,y,rows:(rows||[['',''],['','']]).map(r=>({id:uid(),l:r[0],r:r[1]}))}}
+const MOD={'HTSC 206':'#1e66d0','HTSC512':'#7b3fc4'};
+const CTOM={'Y24':'#2e7d32','Z24':'#00897b','HTTB001':'#e65100','HTTB002':'#b8860b','CDP8':'#6d4c41','MOD32':'#455a64','MOD48':'#827717','IP68 8P':'#b71c1c','IP68 16P':'#880e4f','Bandeja rack':'#424242'};
+const reE=/^(?:[A-Z]{3}\d{2,3}|\d{2})E\d{4}$/i,reC=/^\d{6}[A-Z]?$/i;
+let S,H=[],Rd=[],V={k:1,x:40,y:40},CM={},seq=1,con=null,dr=null,pan=null,pin=null,foc=null,typed=false;const P=new Map();
+const cv=$('cv'),uid=()=>'i'+(seq++).toString(36)+Math.random().toString(36).slice(2,5),gn=id=>S.nodes.find(n=>n.id===id);
+const hc=n=>n.type==='CTO'?CTOM[n.modelo]||'#2e7d32':MOD[n.modelo]||'#1e66d0',models=n=>Object.keys(n.type==='CTO'?CTOM:MOD);
+const cabAt=(n,r,s)=>S.cables.find(c=>[c.a,c.b].some(p=>p.n===n&&p.r===r&&p.s===s)),big=c=>c.cap&&c.cap!=='12Fo';
+// ---- medida del texto para ajustar el tamaño
+const MCX=(()=>{try{return document.createElement('canvas').getContext('2d')}catch(e){return null}})();
+const tw=(t,b)=>{if(!MCX)return String(t||'').length*(b?8:7.5);MCX.font=(b?'bold ':'')+'13px system-ui,sans-serif';return MCX.measureText(String(t||'')).width};
+const codeW=n=>Math.max(80,tw(n.code||'código',1)*1.1+28);
+function nw(n){const cell=Math.max(70,...n.rows.flatMap(r=>[tw(r.l,!!r.lc),tw(r.r,!!r.rc)]))+24,head=10+tw(n.type)+34+codeW(n)+tw(n.modelo)+34+14;return Math.ceil(Math.max(200,head,cell*2+4))}
+const nh=n=>HD+n.rows.length*RH+4;
+const cs=c=>c?`color:${FIBC[c]};font-weight:600;${c==='negro'?'text-shadow:0 0 3px #fff':c==='blanco'?'text-shadow:0 0 3px #000':''}`:'';
+function fixModel(n){if(!models(n).includes(n.modelo))n.modelo=n.type==='CTO'?'Y24':'HTSC 206'}
+function nodeNew(type,code,x,y,rows,modelo){const n={id:uid(),type,code,modelo,x,y,rows:(rows||[['',''],['','']]).map(r=>({id:uid(),l:r[0],r:r[1],lc:r[2]||'',rc:r[3]||''}))};fixModel(n);return n}
 function example(){
- const A=nodeNew('Empalme','01E0486',40,60,[['SN1 1X6','OUT1'],['','OUT2'],['','OUT3'],['','OUT4'],['','OUT5'],['','OUT6']]);A.modelo='HTSC512';
- const D=nodeNew('Empalme','01E0358',560,210,[['IN1','OUT1'],['','OUT2'],['','OUT3']]),B=nodeNew('CTO','269147',560,20,[['IN','']]),C=nodeNew('CTO','269272',560,110,[['IN','']]),E=nodeNew('CTO','269273',900,210,[['IN','']]),F=nodeNew('CTO','269637',900,320,[['IN','']]);
- const k=(a,i,b,j,cap,fc)=>({id:uid(),a:{n:a.id,r:a.rows[i].id,s:'r'},b:{n:b.id,r:b.rows[j].id,s:'l'},cap,fc,note:''});
- return {title:'Carta de empalme',zone:'H8.1',date:new Date().toLocaleDateString('es-ES'),pon:'',arbol:'',fus:'',rev:'',mot:{},nodes:[A,B,C,D,E,F],cables:[k(A,0,B,0,'12Fo','rojo'),k(A,1,C,0,'12Fo','verde'),k(A,2,D,0,'24Fo','violeta'),k(D,0,E,0,'12Fo','rosa'),k(A,3,F,0,'12Fo','amarillo')]};}
+ const A=nodeNew('Empalme','01E0486',40,60,[['SN1 1X6','OUT1','rojo'],['','OUT2'],['','OUT3'],['','OUT4'],['','OUT5'],['','OUT6']],'HTSC512');
+ const D=nodeNew('Empalme','01E0358',560,210,[['IN S06','OUT1','azul'],['','OUT2'],['','OUT3']],'HTSC 206'),B=nodeNew('CTO','269147',560,20,[['IN','']],'Y24'),C=nodeNew('CTO','269272',560,110,[['IN','']],'Z24'),E=nodeNew('CTO','269273',920,210,[['IN','']],'HTTB002'),F=nodeNew('CTO','269637',920,330,[['IN','']],'MOD48');
+ const k=(a,i,b,j,cap,fc,tubo)=>({id:uid(),a:{n:a.id,r:a.rows[i].id,s:'r'},b:{n:b.id,r:b.rows[j].id,s:'l'},cap,fc,tubo:tubo||'',note:''});
+ return {title:'Carta de empalme',zone:'H8.1',date:new Date().toLocaleDateString('es-ES'),pon:'',arbol:'',fus:'',rev:'',mot:{},nodes:[A,B,C,D,E,F],cables:[k(A,0,B,0,'12Fo','rojo'),k(A,1,C,0,'12Fo','verde'),k(A,2,D,0,'24Fo','violeta','rojo'),k(D,0,E,0,'12Fo','rosa'),k(A,3,F,0,'12Fo','amarillo')]};}
 // ---- historial y guardado
 const snap=()=>JSON.stringify({nodes:S.nodes,cables:S.cables});
 function pu(){H.push(snap());if(H.length>60)H.shift();Rd=[]}
@@ -52,27 +66,28 @@ function redo(){if(Rd.length){H.push(snap());rs(JSON.parse(Rd.pop()))}}
 function sv(){cb();try{localStorage.setItem('cfusion',JSON.stringify(S))}catch(e){}}
 function saveJ(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(S,null,1)],{type:'application/json'}));a.download=(S.pon||S.zone||'carta')+'.json';a.click()}
 function rd(i){const r=new FileReader();r.onload=()=>{try{load(JSON.parse(r.result))}catch(e){alert('Archivo no válido')}i.value=''};r.readAsText(i.files[0])}
-function load(d){S=d;S.mot=S.mot||{};H=[];Rd=[];document.querySelectorAll('[data-m]').forEach(i=>i.value=S[i.dataset.m]||'');render();fit();sv()}
+function load(d){if(!d||!Array.isArray(d.nodes)||!Array.isArray(d.cables))throw new Error('formato');S=d;S.mot=S.mot||{};S.nodes.forEach(fixModel);H=[];Rd=[];document.querySelectorAll('[data-m]').forEach(i=>i.value=S[i.dataset.m]||'');render();fit();sv()}
 $('meta').oninput=e=>{S[e.target.dataset.m]=e.target.value;sv()};
 // ---- cambios respecto a la original
 function fijar(){if(S.base&&!confirm('Ya hay una carta original fijada. ¿Sustituirla por el estado actual?'))return;S.base=snap();S.baseDate=new Date().toLocaleString('es-ES');S.mot={};render();sv()}
 function cb(){const b=$('bch');if(b)b.textContent='Cambios'+(S.base?' ('+diff().length+')':'')}
 function changeMap(){const m={};diff().forEach(r=>{m[r.key]=(m[r.key]==='A'||r.tipo==='Añadido')?'A':'M'});return m}
+const cdesc=c=>(c.cap||'')+(big(c)&&c.tubo?' tubo '+c.tubo:'')+(c.fc?' fibra '+c.fc:'');
 function diff(){
  if(!S.base)return [];const B=JSON.parse(S.base),R=[],nn=(L,id)=>L.nodes.find(n=>n.id===id);
  const ce=(L,e)=>{const n=nn(L,e.n);return (n?n.code:'?')+' · '+(e.s==='l'?'ent':'sal')+(n?n.rows.findIndex(r=>r.id===e.r)+1:'?')};
  new Set([...B.nodes,...S.nodes].map(n=>n.id)).forEach(id=>{const a=nn(B,id),b=nn(S,id);
-  if(!a){R.push({key:id,elem:b.code,tipo:'Añadido',campo:'Elemento',antes:'',despues:b.type});return}
-  if(!b){R.push({key:id,elem:a.code,tipo:'Eliminado',campo:'Elemento',antes:a.type,despues:''});return}
-  [['code','Código'],['type','Tipo'],['modelo','Modelo']].forEach(([k,t])=>{if((a[k]||'')!==(b[k]||'')&&!(k==='modelo'&&b.type==='CTO'))R.push({key:id,elem:b.code,tipo:'Modificado',campo:t,antes:a[k]||'',despues:b[k]||''})});
+  if(!a){R.push({key:id,elem:b.code,tipo:'Añadido',campo:'Elemento',antes:'',despues:b.type+' '+b.modelo});return}
+  if(!b){R.push({key:id,elem:a.code,tipo:'Eliminado',campo:'Elemento',antes:a.type+' '+a.modelo,despues:''});return}
+  [['code','Código'],['type','Tipo'],['modelo','Modelo']].forEach(([k,t])=>{if((a[k]||'')!==(b[k]||''))R.push({key:id,elem:b.code,tipo:'Modificado',campo:t,antes:a[k]||'',despues:b[k]||''})});
   new Set([...a.rows,...b.rows].map(r=>r.id)).forEach(rid=>{const x=a.rows.find(r=>r.id===rid),y=b.rows.find(r=>r.id===rid),i=b.rows.indexOf(y)+1;
    if(!x)R.push({key:id,elem:b.code,tipo:'Añadido',campo:'Fila '+i,antes:'',despues:y.l+' | '+y.r});
    else if(!y)R.push({key:id,elem:b.code,tipo:'Eliminado',campo:'Fila',antes:x.l+' | '+x.r,despues:''});
    else ['l','r'].forEach(s=>{if(x[s]!==y[s])R.push({key:id,elem:b.code,tipo:'Modificado',campo:'Fila '+i+(s==='l'?' entrada':' salida'),antes:x[s],despues:y[s]})})})});
  new Set([...B.cables,...S.cables].map(c=>c.id)).forEach(id=>{const a=B.cables.find(c=>c.id===id),b=S.cables.find(c=>c.id===id),d=(L,c)=>ce(L,c.a)+' → '+ce(L,c.b);
-  if(!a)R.push({key:id,elem:ce(S,b.a),tipo:'Añadido',campo:'Cable',antes:'',despues:d(S,b)+' ('+(b.cap||'')+(b.fc?' '+b.fc:'')+')'});
-  else if(!b)R.push({key:id,elem:ce(B,a.a),tipo:'Eliminado',campo:'Cable',antes:d(B,a),despues:''});
-  else[['Conexión',d(B,a),d(S,b)],['Capacidad',a.cap,b.cap],['Fibra',a.fc,b.fc],['Nota',a.note,b.note]].forEach(([c,x,y])=>{if((x||'')!==(y||''))R.push({key:id,elem:ce(S,b.a),tipo:'Modificado',campo:c,antes:x||'',despues:y||''})})});
+  if(!a)R.push({key:id,elem:ce(S,b.a),tipo:'Añadido',campo:'Cable',antes:'',despues:d(S,b)+' ('+cdesc(b)+')'});
+  else if(!b)R.push({key:id,elem:ce(B,a.a),tipo:'Eliminado',campo:'Cable',antes:d(B,a)+' ('+cdesc(a)+')',despues:''});
+  else[['Conexión',d(B,a),d(S,b)],['Capacidad',a.cap,b.cap],['Tubo',a.tubo,b.tubo],['Fibra',a.fc,b.fc],['Nota',a.note,b.note]].forEach(([c,x,y])=>{if((x||'')!==(y||''))R.push({key:id,elem:ce(S,b.a),tipo:'Modificado',campo:c,antes:x||'',despues:y||''})})});
  return R}
 function showCh(){
  if(!S.base){alert('Primero pulsa «Fijar original» con la carta tal como te la han dado.');return}
@@ -82,62 +97,95 @@ function showCh(){
  m.addEventListener('change',e=>{const k=e.target.dataset.k;if(k)(S.mot[k]=S.mot[k]||{})[e.target.dataset.f]=e.target.value;sv()});
  m.onclick=e=>{if(e.target.dataset.x||e.target===m)m.remove()};document.body.appendChild(m)}
 // ---- dibujo
-const pt=e=>{const n=gn(e.n),i=n?n.rows.findIndex(r=>r.id===e.r):-1;return i<0?null:{x:n.x+(e.s==='r'?W:0),y:n.y+HD+2+i*RH+13.5}};
+const pt=e=>{const n=gn(e.n),i=n?n.rows.findIndex(r=>r.id===e.r):-1;return i<0?null:{x:n.x+(e.s==='r'?nw(n):0),y:n.y+2+HD+i*RH+RH/2}};
+function tubeSpan(t){return `<tspan fill="${FIBC[t]||'#fff'}" font-weight="bold"${t==='negro'?' stroke="#fff" stroke-width="2.5" paint-order="stroke"':''}>${esc(cap1(t))}</tspan>`}
 function cabSvg(){let o='';S.cables.forEach(c=>{const p=pt(c.a),q=pt(c.b);if(!p||!q)return;const col=(FC[c.cap]||[0,'#8a8f98'])[1],dx=Math.max(50,Math.abs(q.x-p.x)/2),
- d=`M${p.x},${p.y} C${p.x+(c.a.s==='r'?dx:-dx)},${p.y} ${q.x+(c.b.s==='r'?dx:-dx)},${q.y} ${q.x},${q.y}`,mx=(p.x+q.x)/2,my=(p.y+q.y)/2;
+ d=`M${p.x},${p.y} C${p.x+(c.a.s==='r'?dx:-dx)},${p.y} ${q.x+(c.b.s==='r'?dx:-dx)},${q.y} ${q.x},${q.y}`,mx=(p.x+q.x)/2,my=(p.y+q.y)/2,lab=(c.cap||'').replace('Fo','f'),tb=big(c)&&c.tubo?c.tubo:'',lw=Math.ceil((lab.length+(tb?6+tb.length:0))*7.4+18);
  if(CM[c.id])o+=`<path d="${d}" fill="none" stroke="#ff6d00" stroke-width="8" opacity=".45"/>`;
  if(col==='#cfd3d8')o+=`<path d="${d}" fill="none" stroke="#8a8f98" stroke-width="5.5"/>`;
- o+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="3"/><path class="hit" data-c="${c.id}" d="${d}" fill="none" stroke="transparent" stroke-width="14"/><g transform="translate(${mx},${my})"><rect x="-17" y="-8" width="34" height="16" rx="4" fill="#10141c" stroke="${col}"/><text text-anchor="middle" y="4" font-size="10" font-family="Arial" fill="#fff">${(c.cap||'').replace('Fo','f')}</text></g>`});return o}
+ o+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="3"/><path class="hit" data-c="${c.id}" d="${d}" fill="none" stroke="transparent" stroke-width="16"/><g transform="translate(${mx},${my})"><rect x="${-lw/2}" y="-9" width="${lw}" height="18" rx="4" fill="#10141c" stroke="${col}"/><text text-anchor="middle" y="4" font-size="11" font-family="Arial" fill="#fff">${lab}${tb?' tubo '+tubeSpan(tb):''}</text></g>`});return o}
 const cables=()=>{$('sv').innerHTML=cabSvg()+'<path id="tmp" fill="none" stroke="#fff" stroke-dasharray="4"/>'};
-const dc=(n,r,s)=>{const c=cabAt(n.id,r.id,s);return c?`background:${fcx(c.fc)||'#cfd3d8'}`:''};
-function nodeHtml(n){return `<div class="n${CM[n.id]?' m':''}" data-n="${n.id}" style="left:${n.x}px;top:${n.y}px"><div class="h" style="background:${hc(n)}"><select data-f="type"><option${n.type==='Empalme'?' selected':''}>Empalme</option><option${n.type==='CTO'?' selected':''}>CTO</option></select><input class="${reE.test(n.code)||reC.test(n.code)?'':'bad'}" data-f="code" placeholder="código" value="${esc(n.code)}">${n.type==='Empalme'?`<select data-f="modelo">${Object.keys(MOD).map(m=>`<option${m===n.modelo?' selected':''}>${m}</option>`).join('')}</select>`:''}</div>`+
- n.rows.map(r=>`<div class="rw"><i class="d l" data-d="${n.id}|${r.id}|l" style="${dc(n,r,'l')}"></i><input data-r="${r.id}" data-s="l" placeholder="entrada" value="${esc(r.l)}"><input data-r="${r.id}" data-s="r" placeholder="salida" value="${esc(r.r)}"><i class="d r" data-d="${n.id}|${r.id}|r" style="${dc(n,r,'r')}"></i></div>`).join('')+
+const dc=(n,r,s)=>{const c=cabAt(n.id,r.id,s);return c?`background:${FIBC[c.fc]||'#cfd3d8'}`:''};
+function nodeHtml(n){return `<div class="n${CM[n.id]?' m':''}" data-n="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${nw(n)}px"><div class="h" style="background:${hc(n)}"><select data-f="type"><option${n.type==='Empalme'?' selected':''}>Empalme</option><option${n.type==='CTO'?' selected':''}>CTO</option></select><input class="${reE.test(n.code)||reC.test(n.code)?'':'bad'}" data-f="code" placeholder="código" value="${esc(n.code)}" style="width:${codeW(n)}px"><select data-f="modelo">${models(n).map(m=>`<option${m===n.modelo?' selected':''}>${m}</option>`).join('')}</select></div>`+
+ n.rows.map(r=>`<div class="rw"><i class="d l" data-d="${n.id}|${r.id}|l" style="${dc(n,r,'l')}"></i><input data-r="${r.id}" data-s="l" placeholder="entrada" value="${esc(r.l)}" style="${cs(r.lc)}"><input data-r="${r.id}" data-s="r" placeholder="salida" value="${esc(r.r)}" style="${cs(r.rc)}"><i class="d r" data-d="${n.id}|${r.id}|r" style="${dc(n,r,'r')}"></i></div>`).join('')+
  '<div class="f"><button data-a="+">+ fila</button><button data-a="-">− fila</button><button data-a="x">✕ elemento</button></div></div>'}
 function render(){CM=changeMap();$('w').innerHTML='<svg id="sv"></svg>'+S.nodes.map(nodeHtml).join('');cables();ap()}
 const ap=()=>$('w').style.transform=`translate(${V.x}px,${V.y}px) scale(${V.k})`;
-function fit(){if(!S.nodes.length)return;const b=S.nodes.map(n=>[n.x,n.y,n.x+W,n.y+nh(n)+24]),x0=Math.min(...b.map(a=>a[0])),y0=Math.min(...b.map(a=>a[1])),x1=Math.max(...b.map(a=>a[2])),y1=Math.max(...b.map(a=>a[3])),w=cv.clientWidth,h=cv.clientHeight;
+function zoomAt(k,mx,my){k=Math.min(3,Math.max(.15,k));V.x=mx-(mx-V.x)*k/V.k;V.y=my-(my-V.y)*k/V.k;V.k=k;ap()}
+function zoom(f){zoomAt(V.k*f,cv.clientWidth/2,cv.clientHeight/2)}
+function fit(){if(!S.nodes.length)return;const b=S.nodes.map(n=>[n.x,n.y,n.x+nw(n),n.y+nh(n)+28]),x0=Math.min(...b.map(a=>a[0])),y0=Math.min(...b.map(a=>a[1])),x1=Math.max(...b.map(a=>a[2])),y1=Math.max(...b.map(a=>a[3])),w=cv.clientWidth,h=cv.clientHeight;
  V.k=Math.min(1.2,(w-60)/(x1-x0),(h-60)/(y1-y0));V.x=(w-(x1-x0)*V.k)/2-x0*V.k;V.y=(h-(y1-y0)*V.k)/2-y0*V.k;ap()}
-function addNode(t){pu();const r=cv.getBoundingClientRect(),n=nodeNew(t,'',(r.width/2-V.x)/V.k-W/2,(r.height/2-V.y)/V.k-40);S.nodes.push(n);render();sv()}
-// ---- interacción
+function addNode(t){pu();const r=cv.getBoundingClientRect(),n=nodeNew(t,'',(r.width/2-V.x)/V.k-100,(r.height/2-V.y)/V.k-40);S.nodes.push(n);render();sv()}
+// ---- interacción (ratón y táctil, con zoom de dos dedos)
+const cap=e=>{try{cv.setPointerCapture(e.pointerId)}catch(_){}};
 const wp=e=>{const r=cv.getBoundingClientRect();return {x:(e.clientX-r.left-V.x)/V.k,y:(e.clientY-r.top-V.y)/V.k}};
-cv.addEventListener('pointerdown',e=>{const t=e.target,d=t.closest('[data-d]'),h=t.closest('.h');
- if(d){e.preventDefault();const[n,r,s]=d.dataset.d.split('|');con={n,r,s};cv.setPointerCapture(e.pointerId);return}
- if(h&&!/INPUT|SELECT/.test(t.tagName)){const n=gn(h.closest('.n').dataset.n),p=wp(e);dr={n,ox:p.x-n.x,oy:p.y-n.y,mv:0};cv.setPointerCapture(e.pointerId);return}
- if(t.closest('.n')||t.classList.contains('hit'))return;pan={x:e.clientX-V.x,y:e.clientY-V.y};cv.setPointerCapture(e.pointerId)});
-cv.addEventListener('pointermove',e=>{
+function pinchStart(){const [a,b]=[...P.values()],r=cv.getBoundingClientRect(),cx=(a.x+b.x)/2-r.left,cy=(a.y+b.y)/2-r.top;
+ if(con){con=null;const t=$('tmp');if(t)t.setAttribute('d','')}if(dr&&dr.mv)sv();dr=pan=null;
+ pin={d0:Math.hypot(a.x-b.x,a.y-b.y)||1,k0:V.k,wx:(cx-V.x)/V.k,wy:(cy-V.y)/V.k};
+ for(const id of P.keys())try{cv.setPointerCapture(id)}catch(e){}
+ if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}
+cv.addEventListener('pointerdown',e=>{P.set(e.pointerId,{x:e.clientX,y:e.clientY});if(P.size===2){e.preventDefault();pinchStart();return}if(P.size>2||pin)return;
+ const t=e.target,d=t.closest('[data-d]'),h=t.closest('.h');
+ if(d){e.preventDefault();const[n,r,s]=d.dataset.d.split('|');con={n,r,s};cap(e);return}
+ if(h&&!/INPUT|SELECT/.test(t.tagName)){const n=gn(h.closest('.n').dataset.n),p=wp(e);dr={n,ox:p.x-n.x,oy:p.y-n.y,mv:0};cap(e);return}
+ if(t.closest('.n')||t.classList.contains('hit'))return;pan={x:e.clientX-V.x,y:e.clientY-V.y};cap(e)});
+cv.addEventListener('pointermove',e=>{if(P.has(e.pointerId))P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(pin){if(P.size<2)return;const [a,b]=[...P.values()],r=cv.getBoundingClientRect(),cx=(a.x+b.x)/2-r.left,cy=(a.y+b.y)/2-r.top,k=Math.min(3,Math.max(.15,pin.k0*Math.hypot(a.x-b.x,a.y-b.y)/pin.d0));
+  V.k=k;V.x=cx-pin.wx*k;V.y=cy-pin.wy*k;ap();return}
  if(dr){if(!dr.mv){pu();dr.mv=1}const p=wp(e);dr.n.x=Math.round(p.x-dr.ox);dr.n.y=Math.round(p.y-dr.oy);const el=document.querySelector(`[data-n="${dr.n.id}"]`);el.style.left=dr.n.x+'px';el.style.top=dr.n.y+'px';cables()}
  else if(pan){V.x=e.clientX-pan.x;V.y=e.clientY-pan.y;ap()}
  else if(con){const a=pt(con),q=wp(e),t=$('tmp');if(a&&t)t.setAttribute('d',`M${a.x},${a.y} L${q.x},${q.y}`)}});
-cv.addEventListener('pointerup',e=>{
- if(con){const t=document.elementFromPoint(e.clientX,e.clientY),d=t&&t.closest&&t.closest('[data-d]');
-  if(d){const[n,r,s]=d.dataset.d.split('|');if(!(n===con.n&&r===con.r&&s===con.s)){pu();const dup=(a,b,c)=>S.cables.filter(x=>![x.a,x.b].some(p=>(p.n===a&&p.r===b&&p.s===c)));
-   S.cables=dup(con.n,con.r,con.s);S.cables=S.cables.filter(x=>![x.a,x.b].some(p=>p.n===n&&p.r===r&&p.s===s));
-   S.cables.push({id:uid(),a:{n:con.n,r:con.r,s:con.s},b:{n,r,s},cap:'12Fo',fc:'',note:''});render();sv()}}else cables()}
- if(dr&&dr.mv)sv();con=dr=pan=null});
-cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,k=Math.min(3,Math.max(.15,V.k*(e.deltaY<0?1.12:.89)));V.x=mx-(mx-V.x)*k/V.k;V.y=my-(my-V.y)*k/V.k;V.k=k;ap()},{passive:false});
-$('w').addEventListener('change',e=>{const t=e.target,nd=t.closest('.n');if(!nd)return;const n=gn(nd.dataset.n);pu();
- if(t.dataset.f){n[t.dataset.f]=t.value;if(t.dataset.f==='code'){t.classList.toggle('bad',!(reE.test(n.code)||reC.test(n.code)));nd.classList.toggle('m',!!changeMap()[n.id]);sv()}else{render();sv()}}
- else if(t.dataset.r){n.rows.find(r=>r.id===t.dataset.r)[t.dataset.s]=t.value;nd.classList.toggle('m',!!changeMap()[n.id]);sv()}});
-$('w').addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c){editCable(c.dataset.c);return}
+function pEnd(e){P.delete(e.pointerId);if(pin){if(P.size<2)pin=null;con=dr=pan=null;return}
+ if(con&&e.type==='pointerup'){const t=document.elementFromPoint(e.clientX,e.clientY),d=t&&t.closest&&t.closest('[data-d]');
+  if(d){const[n,r,s]=d.dataset.d.split('|');if(!(n===con.n&&r===con.r&&s===con.s)){pu();const free=(a,b,c)=>S.cables.filter(x=>![x.a,x.b].some(p=>p.n===a&&p.r===b&&p.s===c));
+   S.cables=free(con.n,con.r,con.s);S.cables=free(n,r,s);S.cables.push({id:uid(),a:{n:con.n,r:con.r,s:con.s},b:{n,r,s},cap:'12Fo',fc:'',tubo:'',note:''});render();sv()}}else cables()}
+ else if(con)cables();
+ if(dr&&dr.mv)sv();con=dr=pan=null}
+cv.addEventListener('pointerup',pEnd);cv.addEventListener('pointercancel',pEnd);
+cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect();zoomAt(V.k*(e.deltaY<0?1.12:.89),e.clientX-r.left,e.clientY-r.top)},{passive:false});
+// ---- edición de celdas y cabeceras
+const W$=$('w');
+W$.addEventListener('focusin',e=>{const t=e.target;typed=false;if(t.dataset.r){foc={n:t.closest('.n').dataset.n,r:t.dataset.r,s:t.dataset.s,el:t};$('tc').hidden=false}});
+W$.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&a.dataset&&a.dataset.r)){$('tc').hidden=true;foc=null}},200));
+W$.addEventListener('input',e=>{const t=e.target,nd=t.closest('.n');if(!nd||t.tagName==='SELECT')return;const n=gn(nd.dataset.n);if(!typed){pu();typed=true}
+ if(t.dataset.r)n.rows.find(r=>r.id===t.dataset.r)[t.dataset.s]=t.value;else if(t.dataset.f==='code'){n.code=t.value;t.style.width=codeW(n)+'px'}else return;
+ nd.style.width=nw(n)+'px';cables();sv()});
+W$.addEventListener('change',e=>{const t=e.target,nd=t.closest('.n');if(!nd)return;const n=gn(nd.dataset.n);
+ if(t.tagName==='SELECT'){pu();n[t.dataset.f]=t.value;fixModel(n);render();sv();return}
+ if(t.dataset.f==='code')t.classList.toggle('bad',!(reE.test(n.code)||reC.test(n.code)));
+ CM=changeMap();nd.classList.toggle('m',!!CM[n.id]);sv()});
+W$.addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c){editCable(c.dataset.c);return}
  const b=e.target.closest('[data-a]');if(!b)return;const n=gn(b.closest('.n').dataset.n),a=b.dataset.a;
- if(a==='+'){pu();n.rows.push({id:uid(),l:'',r:''})}
+ if(a==='+'){pu();n.rows.push({id:uid(),l:'',r:'',lc:'',rc:''})}
  else if(a==='-'){if(n.rows.length<2)return;pu();const r=n.rows.pop();S.cables=S.cables.filter(c=>![c.a,c.b].some(p=>p.n===n.id&&p.r===r.id))}
  else{if(!confirm('¿Eliminar '+(n.code||'el elemento')+'?'))return;pu();S.nodes=S.nodes.filter(x=>x!==n);S.cables=S.cables.filter(c=>c.a.n!==n.id&&c.b.n!==n.id)}
  render();sv()});
-function editCable(id){const c=S.cables.find(x=>x.id===id),m=document.createElement('div');let fc=c.fc;m.className='md';
- m.innerHTML=`<div class="bx"><b>Cable / fibra</b><label>Capacidad</label><select id="ec">${CABLES.map(v=>`<option${v===c.cap?' selected':''}>${v}</option>`).join('')}</select><label>Color de fibra</label><div id="sw">${FIB.map(f=>`<i data-f="${f}" title="${f}" style="background:${FIBC[f]}${c.fc===f?';outline:2px solid #fff':''}"></i>`).join('')}</div><label>Nota</label><input id="en" value="${esc(c.note)}"><div class="row"><button class="p" data-x="a">Aplicar</button><button data-x="e">Eliminar</button><button data-x="c">Cerrar</button></div></div>`;
- m.onclick=e=>{const t=e.target;if(t.dataset.f){fc=t.dataset.f;[...$('sw').children].forEach(i=>i.style.outline=i.dataset.f===fc?'2px solid #fff':'')}
-  else if(t.dataset.x==='a'){pu();c.cap=$('ec').value;c.fc=fc;c.note=$('en').value;m.remove();render();sv()}
+// paleta de color del texto de la celda activa
+$('tc').insertAdjacentHTML('beforeend',FIB.map(f=>`<i data-c="${f}" title="${f}" style="background:${FIBC[f]}"></i>`).join(''));
+$('tc').addEventListener('pointerdown',e=>e.preventDefault());
+$('tc').addEventListener('click',e=>{const c=e.target.dataset.c;if(c===undefined||!foc)return;const n=gn(foc.n),r=n&&n.rows.find(x=>x.id===foc.r);if(!r)return;pu();r[foc.s+'c']=c;foc.el.style.cssText=cs(c);
+ const nd=foc.el.closest('.n');nd.style.width=nw(n)+'px';cables();sv()});
+function editCable(id){const c=S.cables.find(x=>x.id===id),m=document.createElement('div');let fc=c.fc,tb=c.tubo||'';m.className='md';
+ const pal=(k,v)=>FIB.map(f=>`<i data-${k}="${f}" title="${f}" style="background:${FIBC[f]}${v===f?';outline:3px solid #3d8bff':''}"></i>`).join('');
+ m.innerHTML=`<div class="bx"><b>Cable / fibra</b><label>Capacidad</label><select id="ec">${CABLES.map(v=>`<option${v===c.cap?' selected':''}>${v}</option>`).join('')}</select><div id="tbw"${big(c)?'':' hidden'}><label>Color del tubo</label><div class="pal" id="ptb">${pal('t',tb)}</div></div><label>Color de fibra</label><div class="pal" id="pfc">${pal('f',fc)}</div><label>Nota</label><input id="en" value="${esc(c.note)}"><div class="row"><button class="p" data-x="a">Aplicar</button><button data-x="e">Eliminar</button><button data-x="c">Cerrar</button></div></div>`;
+ m.querySelector('#ec').onchange=e=>m.querySelector('#tbw').hidden=e.target.value==='12Fo';
+ const mark=(box,k,v)=>[...m.querySelector(box).children].forEach(i=>i.style.outline=i.dataset[k]===v?'3px solid #3d8bff':'');
+ m.onclick=e=>{const t=e.target;if(t.dataset.f){fc=t.dataset.f;mark('#pfc','f',fc)}else if(t.dataset.t){tb=t.dataset.t;mark('#ptb','t',tb)}
+  else if(t.dataset.x==='a'){pu();c.cap=m.querySelector('#ec').value;c.fc=fc;c.tubo=c.cap==='12Fo'?'':tb;c.note=m.querySelector('#en').value;m.remove();render();sv()}
   else if(t.dataset.x==='e'){pu();S.cables=S.cables.filter(x=>x!==c);m.remove();render();sv()}
   else if(t.dataset.x==='c'||t===m)m.remove()};document.body.appendChild(m)}
 // ---- PDF
-function svgEx(){const bx=S.nodes.map(n=>[n.x,n.y,n.x+W,n.y+nh(n)]),x0=Math.min(...bx.map(b=>b[0]))-30,y0=Math.min(...bx.map(b=>b[1]))-30,w=Math.max(Math.max(...bx.map(b=>b[2]))+30-x0,900),h=Math.max(...bx.map(b=>b[3]))+60-y0;let o=cabSvg().replace(/<path class="hit"[^>]*>/g,'');
- S.nodes.forEach(n=>{const c=hc(n);o+=`<rect x="${n.x}" y="${n.y}" width="${W}" height="${nh(n)}" rx="8" fill="#f4f7fb" stroke="${CM[n.id]?'#ff6d00':c}" stroke-width="${CM[n.id]?3:2}"/><rect x="${n.x}" y="${n.y}" width="${W}" height="${HD}" rx="8" fill="${c}"/><text x="${n.x+8}" y="${n.y+20}" fill="#fff" font-size="13" font-weight="bold" font-family="Arial">${esc(n.code)} · ${n.type==='CTO'?'CTO':esc(n.modelo)}</text>`;
-  n.rows.forEach((r,i)=>{const y=n.y+HD+i*RH;o+=`<line x1="${n.x}" x2="${n.x+W}" y1="${y}" y2="${y}" stroke="#ccd3de"/><text x="${n.x+8}" y="${y+17}" font-size="11" font-family="Arial" fill="#111">${esc(r.l)}</text><text x="${n.x+W-8}" y="${y+17}" font-size="11" font-family="Arial" fill="#111" text-anchor="end">${esc(r.r)}</text>`;
-   ['l','r'].forEach(s=>{const k=cabAt(n.id,r.id,s);if(k)o+=`<circle cx="${n.x+(s==='r'?W:0)}" cy="${y+13.5}" r="5" fill="${fcx(k.fc)||'#cfd3d8'}" stroke="#333"/>`})})});
- o+=`<text x="${x0+30}" y="${y0+h-14}" font-size="11" font-family="Arial" fill="#445">Cables:</text>`+Object.keys(FC).map((k,i)=>`<rect x="${x0+80+i*92}" y="${y0+h-22}" width="22" height="8" rx="3" fill="${FC[k][1]}" stroke="#8a8f98"/><text x="${x0+106+i*92}" y="${y0+h-14}" font-size="11" font-family="Arial" fill="#445">${k}</text>`).join('');
+const pa=c=>!c?'fill="#111"':c==='blanco'?'fill="#fff" stroke="#555" stroke-width="0.6" paint-order="stroke" font-weight="bold"':`fill="${FIBC[c]}" font-weight="bold"`;
+function svgEx(){const bx=S.nodes.map(n=>[n.x,n.y,n.x+nw(n),n.y+nh(n)]),x0=Math.min(...bx.map(b=>b[0]))-30,y0=Math.min(...bx.map(b=>b[1]))-30,w=Math.max(Math.max(...bx.map(b=>b[2]))+30-x0,920),h=Math.max(...bx.map(b=>b[3]))+84-y0;let o=cabSvg().replace(/<path class="hit"[^>]*>/g,'');
+ S.nodes.forEach(n=>{const c=hc(n),W=nw(n);o+=`<rect x="${n.x}" y="${n.y}" width="${W}" height="${nh(n)}" rx="8" fill="#f4f7fb" stroke="${CM[n.id]?'#ff6d00':c}" stroke-width="${CM[n.id]?3:2}"/><rect x="${n.x}" y="${n.y}" width="${W}" height="${HD}" rx="8" fill="${c}"/><text x="${n.x+8}" y="${n.y+21}" fill="#fff" font-size="13" font-weight="bold" font-family="Arial">${esc(n.code)} · ${n.type==='CTO'?'CTO ':''}${esc(n.modelo)}</text>`;
+  n.rows.forEach((r,i)=>{const y=n.y+2+HD+i*RH;o+=`<line x1="${n.x}" x2="${n.x+W}" y1="${y}" y2="${y}" stroke="#ccd3de"/><line x1="${n.x+W/2}" x2="${n.x+W/2}" y1="${y}" y2="${y+RH}" stroke="#ccd3de"/><text x="${n.x+9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.lc)}>${esc(r.l)}</text><text x="${n.x+W-9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.rc)} text-anchor="end">${esc(r.r)}</text>`;
+   ['l','r'].forEach(s=>{const k=cabAt(n.id,r.id,s);if(k)o+=`<circle cx="${n.x+(s==='r'?W:0)}" cy="${y+RH/2}" r="5" fill="${FIBC[k.fc]||'#cfd3d8'}" stroke="#333"/>`})})});
+ o+=`<text x="${x0+30}" y="${y0+h-38}" font-size="11" font-family="Arial" fill="#445">Cables:</text>`+Object.keys(FC).map((k,i)=>`<rect x="${x0+80+i*92}" y="${y0+h-46}" width="22" height="8" rx="3" fill="${FC[k][1]}" stroke="#8a8f98"/><text x="${x0+106+i*92}" y="${y0+h-38}" font-size="11" font-family="Arial" fill="#445">${k}</text>`).join('');
+ const used=[...new Set(S.nodes.map(n=>(n.type==='CTO'?'CTO ':'')+n.modelo))];
+ o+=`<text x="${x0+30}" y="${y0+h-14}" font-size="11" font-family="Arial" fill="#445">Elementos:</text>`+used.map((u,i)=>{const n={type:u.startsWith('CTO ')?'CTO':'Empalme',modelo:u.replace('CTO ','')};return `<rect x="${x0+96+i*112}" y="${y0+h-24}" width="14" height="12" rx="3" fill="${hc(n)}"/><text x="${x0+114+i*112}" y="${y0+h-14}" font-size="11" font-family="Arial" fill="#445">${esc(u)}</text>`}).join('');
  return {s:`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="${x0} ${y0} ${w} ${h}"><rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="#fff"/>${o}</svg>`,w,h}}
-const peer=(n,r,s)=>{const c=cabAt(n.id,r.id,s);if(!c)return '';const o=(c.a.n===n.id&&c.a.r===r.id&&c.a.s===s)?c.b:c.a,m=gn(o.n),q=m&&m.rows.find(x=>x.id===o.r);return (m?m.code:'?')+' '+(q?(q[o.s]||'#'+(m.rows.indexOf(q)+1)):'')+' ['+(c.cap||'')+(c.fc?' '+c.fc:'')+']'};
+const peer=(n,r,s)=>{const c=cabAt(n.id,r.id,s);if(!c)return '';const o=(c.a.n===n.id&&c.a.r===r.id&&c.a.s===s)?c.b:c.a,m=gn(o.n),q=m&&m.rows.find(x=>x.id===o.r);return (m?m.code:'?')+' '+(q?(q[o.s]||'#'+(m.rows.indexOf(q)+1)):'')+' ['+cdesc(c)+']'};
+const rgb=h=>{h=h.replace('#','');return h.length===3?h.split('').map(v=>parseInt(v+v,16)):h.match(/../g).map(v=>parseInt(v,16))};
 async function pdf(){
  const {jsPDF}=window.jspdf,d=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
  d.setFontSize(18);d.text(S.title||'Carta de empalme',14,16);d.setFontSize(9);d.text(`Fecha: ${S.date||''}   PON: ${S.pon||'-'}   Árbol: ${S.arbol||'-'}   Zona: ${S.zone||''}   Fusionador: ${S.fus||'-'}   Rev.: ${S.rev||'-'}`,14,23);
@@ -146,7 +194,8 @@ async function pdf(){
  const k=Math.min(269/sx.w,165/sx.h);d.addImage(c.toDataURL('image/png'),'PNG',14,28,sx.w*k,sx.h*k);
  d.addPage();d.setFontSize(13);d.text('Carta de elementos: entradas, salidas y conexiones',14,14);let yy=20;
  S.nodes.slice().sort((a,b)=>a.x-b.x||a.y-b.y).forEach(n=>{if(yy>165){d.addPage();yy=14}
-  d.autoTable({startY:yy,head:[[{content:`${n.code||'(sin código)'} · ${n.type==='CTO'?'CTO':n.modelo}`,colSpan:4,styles:{fillColor:hc(n).replace('#','').match(/../g).map(v=>parseInt(v,16))}}],['Entrada','Viene de','Salida','Va a']],body:n.rows.map(r=>[r.l,peer(n,r,'l'),r.r,peer(n,r,'r')]),styles:{fontSize:8},margin:{left:14,right:14}});yy=d.lastAutoTable.finalY+7});
+  d.autoTable({startY:yy,head:[[{content:`${n.code||'(sin código)'} · ${n.type==='CTO'?'CTO ':''}${n.modelo}`,colSpan:4,styles:{fillColor:rgb(hc(n))}}],['Entrada','Viene de','Salida','Va a']],body:n.rows.map(r=>[r.l,peer(n,r,'l'),r.r,peer(n,r,'r')]),styles:{fontSize:8},margin:{left:14,right:14},
+   didParseCell:q=>{if(q.section!=='body'||(q.column.index!==0&&q.column.index!==2))return;const r=n.rows[q.row.index],col=r&&(q.column.index===0?r.lc:r.rc);if(col){q.cell.styles.textColor=col==='blanco'?[120,120,120]:rgb(FIBC[col]);q.cell.styles.fontStyle='bold'}}});yy=d.lastAutoTable.finalY+7});
  {const CH=diff();d.addPage();d.setFontSize(13);d.text('Hoja de modificaciones respecto a la carta original',14,14);d.setFontSize(9);
   d.text(`PON: ${S.pon||'-'}   Árbol: ${S.arbol||'-'}   Fusionador: ${S.fus||'-'}   Revisión: ${S.rev||'-'}   Original fijada: ${S.baseDate||'-'}   Fecha: ${S.date||''}`,14,20);let fy=32;
   if(!S.base)d.text('No hay carta original fijada: no se pueden calcular modificaciones.',14,28);
