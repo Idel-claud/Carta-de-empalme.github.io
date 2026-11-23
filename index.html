@@ -13,7 +13,7 @@ header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;b
 #cv{flex:1;position:relative;overflow:hidden;background-image:radial-gradient(var(--bd) 1px,transparent 1px);background-size:20px 20px;touch-action:none;cursor:grab}
 #w{position:absolute;left:0;top:0;transform-origin:0 0}#sv{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}#sv .hit{pointer-events:stroke;cursor:pointer}
 .n{position:absolute;background:var(--pn);border:2px solid var(--bd);border-radius:8px;box-shadow:0 3px 10px #0005}.n.m{border-color:#ff6d00}
-.h{height:32px;display:flex;gap:4px;align-items:center;padding:3px 5px;border-radius:5px 5px 0 0;cursor:move;color:#fff;white-space:nowrap}.h input,.h select{padding:1px 4px;font-size:12px;background:#0003;color:#fff;border-color:#fff4;min-width:0}.h option{color:#111}.h input{font-weight:700}
+.h{height:32px;display:flex;gap:4px;align-items:center;padding:3px 5px;border-radius:5px 5px 0 0;cursor:move;color:#fff;white-space:nowrap}.h input,.h select{padding:1px 4px;font-size:12px;background:#0003;color:#fff;border-color:#fff4;min-width:0}.h option{color:#111}.h input{font-weight:700}.g{font-size:17px;line-height:1;padding:2px 3px;cursor:move;opacity:.85;user-select:none;-webkit-user-select:none}.f{cursor:move}@media(pointer:coarse){.g{font-size:24px;padding:2px 6px}}
 .rw{height:28px;display:flex;position:relative;border-top:1px solid var(--bd)}.rw input{flex:1;width:50%;border:0;border-radius:0;background:transparent;padding:2px 9px;font-size:13px;min-width:0}.rw input+input{text-align:right;border-left:1px solid var(--bd)}
 .d{position:absolute;top:50%;width:12px;height:12px;margin-top:-6px;border-radius:50%;background:#7a8597;border:2px solid var(--pn);cursor:crosshair;z-index:2}.d.l{left:-8px}.d.r{right:-8px}.d:hover{box-shadow:0 0 0 4px #3d8bff66}
 @media(pointer:coarse){.d{width:18px;height:18px;margin-top:-9px}.d.l{left:-11px}.d.r{right:-11px}}
@@ -47,7 +47,7 @@ const cabAt=(n,r,s)=>S.cables.find(c=>[c.a,c.b].some(p=>p.n===n&&p.r===r&&p.s===
 const MCX=(()=>{try{return document.createElement('canvas').getContext('2d')}catch(e){return null}})();
 const tw=(t,b)=>{if(!MCX)return String(t||'').length*(b?8:7.5);MCX.font=(b?'bold ':'')+'13px system-ui,sans-serif';return MCX.measureText(String(t||'')).width};
 const codeW=n=>Math.max(80,tw(n.code||'código',1)*1.1+28);
-function nw(n){const cell=Math.max(70,...n.rows.flatMap(r=>[tw(r.l,!!r.lc),tw(r.r,!!r.rc)]))+24,head=10+tw(n.type)+34+codeW(n)+tw(n.modelo)+34+14;return Math.ceil(Math.max(200,head,cell*2+4))}
+function nw(n){const cell=Math.max(70,...n.rows.flatMap(r=>[tw(r.l,!!r.lc),tw(r.r,!!r.rc)]))+24,head=10+(window.matchMedia&&matchMedia('(pointer:coarse)').matches?40:24)+tw(n.type)+34+codeW(n)+tw(n.modelo)+34+14;return Math.ceil(Math.max(200,head,cell*2+4))}
 const nh=n=>HD+n.rows.length*RH+4;
 const cs=c=>c?`color:${FIBC[c]};font-weight:600;${c==='negro'?'text-shadow:0 0 3px #fff':c==='blanco'?'text-shadow:0 0 3px #000':''}`:'';
 function fixModel(n){if(!models(n).includes(n.modelo))n.modelo=n.type==='CTO'?'Y24':'HTSC 206'}
@@ -106,7 +106,7 @@ function cabSvg(){let o='';S.cables.forEach(c=>{const p=pt(c.a),q=pt(c.b);if(!p|
  o+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="3"/><path class="hit" data-c="${c.id}" d="${d}" fill="none" stroke="transparent" stroke-width="16"/><g transform="translate(${mx},${my})"><rect x="${-lw/2}" y="-9" width="${lw}" height="18" rx="4" fill="#10141c" stroke="${col}"/><text text-anchor="middle" y="4" font-size="11" font-family="Arial" fill="#fff">${lab}${tb?' tubo '+tubeSpan(tb):''}</text></g>`});return o}
 const cables=()=>{$('sv').innerHTML=cabSvg()+'<path id="tmp" fill="none" stroke="#fff" stroke-dasharray="4"/>'};
 const dc=(n,r,s)=>{const c=cabAt(n.id,r.id,s);return c?`background:${FIBC[c.fc]||'#cfd3d8'}`:''};
-function nodeHtml(n){return `<div class="n${CM[n.id]?' m':''}" data-n="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${nw(n)}px"><div class="h" style="background:${hc(n)}"><select data-f="type"><option${n.type==='Empalme'?' selected':''}>Empalme</option><option${n.type==='CTO'?' selected':''}>CTO</option></select><input class="${reE.test(n.code)||reC.test(n.code)?'':'bad'}" data-f="code" placeholder="código" value="${esc(n.code)}" style="width:${codeW(n)}px"><select data-f="modelo">${models(n).map(m=>`<option${m===n.modelo?' selected':''}>${m}</option>`).join('')}</select></div>`+
+function nodeHtml(n){return `<div class="n${CM[n.id]?' m':''}" data-n="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${nw(n)}px"><div class="h" style="background:${hc(n)}"><span class="g" title="Arrastrar">⠿</span><select data-f="type"><option${n.type==='Empalme'?' selected':''}>Empalme</option><option${n.type==='CTO'?' selected':''}>CTO</option></select><input class="${reE.test(n.code)||reC.test(n.code)?'':'bad'}" data-f="code" placeholder="código" value="${esc(n.code)}" style="width:${codeW(n)}px"><select data-f="modelo">${models(n).map(m=>`<option${m===n.modelo?' selected':''}>${m}</option>`).join('')}</select></div>`+
  n.rows.map(r=>`<div class="rw"><i class="d l" data-d="${n.id}|${r.id}|l" style="${dc(n,r,'l')}"></i><input data-r="${r.id}" data-s="l" placeholder="entrada" value="${esc(r.l)}" style="${cs(r.lc)}"><input data-r="${r.id}" data-s="r" placeholder="salida" value="${esc(r.r)}" style="${cs(r.rc)}"><i class="d r" data-d="${n.id}|${r.id}|r" style="${dc(n,r,'r')}"></i></div>`).join('')+
  '<div class="f"><button data-a="+">+ fila</button><button data-a="-">− fila</button><button data-a="x">✕ elemento</button></div></div>'}
 function render(){CM=changeMap();$('w').innerHTML='<svg id="sv"></svg>'+S.nodes.map(nodeHtml).join('');cables();ap()}
@@ -125,9 +125,9 @@ function pinchStart(){const [a,b]=[...P.values()],r=cv.getBoundingClientRect(),c
  for(const id of P.keys())try{cv.setPointerCapture(id)}catch(e){}
  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur()}
 cv.addEventListener('pointerdown',e=>{P.set(e.pointerId,{x:e.clientX,y:e.clientY});if(P.size===2){e.preventDefault();pinchStart();return}if(P.size>2||pin)return;
- const t=e.target,d=t.closest('[data-d]'),h=t.closest('.h');
+ const t=e.target,d=t.closest('[data-d]'),h=t.closest('.h,.f');
  if(d){e.preventDefault();const[n,r,s]=d.dataset.d.split('|');con={n,r,s};cap(e);return}
- if(h&&!/INPUT|SELECT/.test(t.tagName)){const n=gn(h.closest('.n').dataset.n),p=wp(e);dr={n,ox:p.x-n.x,oy:p.y-n.y,mv:0};cap(e);return}
+ if(h&&!/INPUT|SELECT|BUTTON|OPTION/.test(t.tagName)){e.preventDefault();const n=gn(h.closest('.n').dataset.n),p=wp(e);dr={n,ox:p.x-n.x,oy:p.y-n.y,mv:0};cap(e);return}
  if(t.closest('.n')||t.classList.contains('hit'))return;pan={x:e.clientX-V.x,y:e.clientY-V.y};cap(e)});
 cv.addEventListener('pointermove',e=>{if(P.has(e.pointerId))P.set(e.pointerId,{x:e.clientX,y:e.clientY});
  if(pin){if(P.size<2)return;const [a,b]=[...P.values()],r=cv.getBoundingClientRect(),cx=(a.x+b.x)/2-r.left,cy=(a.y+b.y)/2-r.top,k=Math.min(3,Math.max(.15,pin.k0*Math.hypot(a.x-b.x,a.y-b.y)/pin.d0));
