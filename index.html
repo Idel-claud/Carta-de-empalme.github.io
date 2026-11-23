@@ -21,7 +21,7 @@ header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;b
 .md{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9}.bx{background:var(--pn);padding:14px;border-radius:10px;border:1px solid var(--bd);width:400px;max-width:94%;max-height:88vh;overflow:auto}.bx label{display:block;margin-top:8px;color:var(--mu);font-size:12px}.bx select,.bx input{width:100%}
 .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.br{border:1px solid var(--bd);border-radius:8px;padding:8px;margin:8px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .pal i{display:inline-block;width:24px;height:24px;border-radius:50%;margin:2px;cursor:pointer;border:1px solid #fff5;vertical-align:middle}
-#tc{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:6px 8px;z-index:8;box-shadow:0 4px 14px #0007;max-width:96vw;text-align:center}#tc span{color:var(--mu);font-size:12px;margin-right:4px}#tc b{display:inline-block;padding:2px 8px;border:1px solid var(--bd);border-radius:12px;cursor:pointer;font-weight:400;vertical-align:middle}
+#tc{position:fixed;left:0;top:0;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:5px 6px;z-index:8;box-shadow:0 4px 14px #0007;display:flex;align-items:center;gap:2px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x;white-space:nowrap}#tc[hidden]{display:none}#tc i{flex:0 0 auto}#tc span,#tc b{flex:0 0 auto}@media(pointer:coarse){#tc i{width:30px;height:30px}}#tc span{color:var(--mu);font-size:12px;margin-right:4px}#tc b{display:inline-block;padding:2px 8px;border:1px solid var(--bd);border-radius:12px;cursor:pointer;font-weight:400;vertical-align:middle}
 </style></head><body>
 <header><b>📡 Cartas de empalme</b><button onclick="addNode('Empalme')">+ Empalme</button><button onclick="addNode('CTO')">+ CTO</button><button onclick="undo()">↶</button><button onclick="redo()">↷</button><button onclick="zoom(1.25)">＋</button><button onclick="zoom(.8)">－</button><button onclick="fit()">Ajustar</button>
 <button id="bm" onclick="$('meta').classList.toggle('on');setTimeout(fit,50)">Datos ▾</button><button onclick="fijar()" title="Guarda la carta tal como te la han dado">📌 Fijar original</button><button id="bch" onclick="showCh()">Cambios</button>
@@ -145,7 +145,13 @@ cv.addEventListener('pointerup',pEnd);cv.addEventListener('pointercancel',pEnd);
 cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect();zoomAt(V.k*(e.deltaY<0?1.12:.89),e.clientX-r.left,e.clientY-r.top)},{passive:false});
 // ---- edición de celdas y cabeceras
 const W$=$('w');
-W$.addEventListener('focusin',e=>{const t=e.target;typed=false;if(t.dataset.r){foc={n:t.closest('.n').dataset.n,r:t.dataset.r,s:t.dataset.s,el:t};$('tc').hidden=false}});
+function placeTc(){const t=$('tc');if(t.hidden)return;const vv=window.visualViewport,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0;
+ t.style.maxWidth=(vw-12)+'px';const w=Math.min(t.scrollWidth,vw-12),hh=t.offsetHeight;t.style.left=(ox+(vw-w)/2)+'px';t.style.top=(oy+vh-hh-8)+'px';
+ if(foc&&foc.el&&document.activeElement===foc.el){const r=foc.el.getBoundingClientRect(),lim=oy+vh-hh-16,top=cv.getBoundingClientRect().top+4;
+  if(r.bottom>lim){V.y-=r.bottom-lim;ap()}else if(r.top<top){V.y+=top-r.top;ap()}}}
+let tcT=0;const placeSoon=()=>{clearTimeout(tcT);placeTc();tcT=setTimeout(placeTc,350)};
+if(window.visualViewport){visualViewport.addEventListener('resize',placeSoon);visualViewport.addEventListener('scroll',placeTc)}
+W$.addEventListener('focusin',e=>{const t=e.target;typed=false;if(t.dataset.r){foc={n:t.closest('.n').dataset.n,r:t.dataset.r,s:t.dataset.s,el:t};$('tc').hidden=false;markTc();placeSoon()}});
 W$.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&a.dataset&&a.dataset.r)){$('tc').hidden=true;foc=null}},200));
 W$.addEventListener('input',e=>{const t=e.target,nd=t.closest('.n');if(!nd||t.tagName==='SELECT')return;const n=gn(nd.dataset.n);if(!typed){pu();typed=true}
  if(t.dataset.r)n.rows.find(r=>r.id===t.dataset.r)[t.dataset.s]=t.value;else if(t.dataset.f==='code'){n.code=t.value;t.style.width=codeW(n)+'px'}else return;
@@ -162,9 +168,12 @@ W$.addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c){editC
  render();sv()});
 // paleta de color del texto de la celda activa
 $('tc').insertAdjacentHTML('beforeend',FIB.map(f=>`<i data-c="${f}" title="${f}" style="background:${FIBC[f]}"></i>`).join(''));
-$('tc').addEventListener('pointerdown',e=>e.preventDefault());
-$('tc').addEventListener('click',e=>{const c=e.target.dataset.c;if(c===undefined||!foc)return;const n=gn(foc.n),r=n&&n.rows.find(x=>x.id===foc.r);if(!r)return;pu();r[foc.s+'c']=c;foc.el.style.cssText=cs(c);
- const nd=foc.el.closest('.n');nd.style.width=nw(n)+'px';cables();sv()});
+['pointerdown','mousedown'].forEach(t=>$('tc').addEventListener(t,e=>{if(e.target.dataset.c!==undefined)e.preventDefault()}));
+$('tc').addEventListener('touchend',e=>{const c=e.target.dataset&&e.target.dataset.c;if(c===undefined)return;e.preventDefault();applyTc(c)},{passive:false});
+function markTc(){if(!foc)return;const n=gn(foc.n),r=n&&n.rows.find(x=>x.id===foc.r),v=r?r[foc.s+'c']||'':'';[...$('tc').querySelectorAll('[data-c]')].forEach(i=>i.style.outline=i.dataset.c===v?'3px solid #3d8bff':'')}
+$('tc').addEventListener('click',e=>{const c=e.target.dataset.c;if(c!==undefined)applyTc(c)});
+function applyTc(c){if(!foc)return;const n=gn(foc.n),r=n&&n.rows.find(x=>x.id===foc.r);if(!r)return;pu();r[foc.s+'c']=c;foc.el.style.cssText=cs(c);
+ const nd=foc.el.closest('.n');nd.style.width=nw(n)+'px';cables();sv();markTc();if(document.activeElement!==foc.el)foc.el.focus({preventScroll:true})}
 function editCable(id){const c=S.cables.find(x=>x.id===id),m=document.createElement('div');let fc=c.fc,tb=c.tubo||'';m.className='md';
  const pal=(k,v)=>FIB.map(f=>`<i data-${k}="${f}" title="${f}" style="background:${FIBC[f]}${v===f?';outline:3px solid #3d8bff':''}"></i>`).join('');
  m.innerHTML=`<div class="bx"><b>Cable / fibra</b><label>Capacidad</label><select id="ec">${CABLES.map(v=>`<option${v===c.cap?' selected':''}>${v}</option>`).join('')}</select><div id="tbw"${big(c)?'':' hidden'}><label>Color del tubo</label><div class="pal" id="ptb">${pal('t',tb)}</div></div><label>Color de fibra</label><div class="pal" id="pfc">${pal('f',fc)}</div><label>Nota</label><input id="en" value="${esc(c.note)}"><div class="row"><button class="p" data-x="a">Aplicar</button><button data-x="e">Eliminar</button><button data-x="c">Cerrar</button></div></div>`;
@@ -207,7 +216,7 @@ async function pdf(){
 }
 //INIT
 try{const t=localStorage.getItem('cfusion');load(t?JSON.parse(t):example())}catch(e){load(example())}
-addEventListener('resize',fit);
+addEventListener('resize',()=>{const a=document.activeElement;if(a&&/INPUT|SELECT/.test(a.tagName))placeSoon();else fit()});
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('inst').hidden=false});
 $('inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('inst').hidden=true};
 addEventListener('appinstalled',()=>$('inst').hidden=true);
