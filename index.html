@@ -21,7 +21,7 @@ header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;b
 .md{position:fixed;inset:0;background:#0008;display:flex;align-items:center;justify-content:center;z-index:9}.bx{background:var(--pn);padding:14px;border-radius:10px;border:1px solid var(--bd);width:400px;max-width:94%;max-height:88vh;overflow:auto}.bx label{display:block;margin-top:8px;color:var(--mu);font-size:12px}.bx select,.bx input{width:100%}
 .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.br{border:1px solid var(--bd);border-radius:8px;padding:8px;margin:8px 0}.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .pal i{display:inline-block;width:24px;height:24px;border-radius:50%;margin:2px;cursor:pointer;border:1px solid #fff5;vertical-align:middle}
-#tc{position:fixed;left:0;top:0;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:5px 6px;z-index:8;box-shadow:0 4px 14px #0007;display:flex;align-items:center;gap:2px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x;white-space:nowrap}#tc[hidden]{display:none}#tc i{flex:0 0 auto}#tc span,#tc b{flex:0 0 auto}@media(pointer:coarse){#tc i{width:30px;height:30px}}#tc span{color:var(--mu);font-size:12px;margin-right:4px}#tc b{display:inline-block;padding:2px 8px;border:1px solid var(--bd);border-radius:12px;cursor:pointer;font-weight:400;vertical-align:middle}
+#tc{position:fixed;left:0;top:0;background:var(--pn);border:1px solid var(--bd);border-radius:10px;padding:5px 6px;z-index:8;box-shadow:0 4px 14px #0007;display:flex;align-items:center;gap:2px;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;touch-action:pan-x;white-space:nowrap}#tc[hidden]{display:none}#tc i{flex:0 0 auto}#tc span,#tc b{flex:0 0 auto}@media(pointer:coarse){#tc i{width:30px;height:30px}}#tc span{color:var(--mu);font-size:12px;margin-right:4px}#tc b.on{background:var(--ac);border-color:var(--ac);color:#fff}#tc b{display:inline-block;padding:2px 8px;border:1px solid var(--bd);border-radius:12px;cursor:pointer;font-weight:400;vertical-align:middle}
 </style></head><body>
 <header><b>📡 Cartas de empalme</b><button onclick="addNode('Empalme')">+ Empalme</button><button onclick="addNode('CTO')">+ CTO</button><button onclick="undo()">↶</button><button onclick="redo()">↷</button><button onclick="zoom(1.25)">＋</button><button onclick="zoom(.8)">－</button><button onclick="fit()">Ajustar</button>
 <button id="bm" onclick="$('meta').classList.toggle('on');setTimeout(fit,50)">Datos ▾</button><button onclick="fijar()" title="Guarda la carta tal como te la han dado">📌 Fijar original</button><button id="bch" onclick="showCh()">Cambios</button>
@@ -29,7 +29,7 @@ header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;b
 <button id="inst" class="p" hidden>⬇ Instalar</button><button class="p" onclick="pdf()">Exportar PDF</button><input id="fj" type="file" accept=".json" hidden onchange="rd(this)"></header>
 <div id="meta"><input data-m="title" placeholder="Título"><input data-m="pon" placeholder="PON (ALCOBENDASA1.1)"><input data-m="arbol" placeholder="Árbol"><input data-m="zone" placeholder="Zona / esquema"><input data-m="fus" placeholder="Fusionador"><input data-m="rev" placeholder="Revisión"><input data-m="date" placeholder="Fecha"></div>
 <div id="cv"><div id="w"></div></div>
-<div id="tc" class="pal" hidden><span>Color del texto:</span><b data-c="">Auto</b></div>
+<div id="tc" class="pal" hidden><b data-mode="c" class="on">Texto</b><b data-mode="b">Celda</b><span>·</span><b data-c="">Auto</b></div>
 <script>
 const $=i=>document.getElementById(i),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),cap1=s=>s?s[0].toUpperCase()+s.slice(1):'';
 const HD=32,RH=28,CABLES=['12Fo','24Fo','48Fo','96Fo','144Fo','192Fo','288Fo','512Fo','576Fo'];
@@ -49,6 +49,7 @@ const tw=(t,b)=>{if(!MCX)return String(t||'').length*(b?8:7.5);MCX.font=(b?'bold
 const codeW=n=>Math.max(80,tw(n.code||'código',1)*1.1+28);
 function nw(n){const cell=Math.max(70,...n.rows.flatMap(r=>[tw(r.l,!!r.lc),tw(r.r,!!r.rc)]))+24,head=10+(window.matchMedia&&matchMedia('(pointer:coarse)').matches?40:24)+tw(n.type)+34+codeW(n)+tw(n.modelo)+34+14;return Math.ceil(Math.max(200,head,cell*2+4))}
 const nh=n=>HD+n.rows.length*RH+4;
+const bgs=b=>b?`background:${FIBC[b]}${b==='blanco'?'':'55'};`:'',cst=(r,s)=>cs(r[s+'c'])+bgs(r[s+'b']);let tcm='c';
 const cs=c=>c?`color:${FIBC[c]};font-weight:600;${c==='negro'?'text-shadow:0 0 3px #fff':c==='blanco'?'text-shadow:0 0 3px #000':''}`:'';
 function fixModel(n){if(!models(n).includes(n.modelo))n.modelo=n.type==='CTO'?'Y24':'HTSC 206'}
 function nodeNew(type,code,x,y,rows,modelo){const n={id:uid(),type,code,modelo,x,y,rows:(rows||[['',''],['','']]).map(r=>({id:uid(),l:r[0],r:r[1],lc:r[2]||'',rc:r[3]||''}))};fixModel(n);return n}
@@ -107,7 +108,7 @@ function cabSvg(){let o='';S.cables.forEach(c=>{const p=pt(c.a),q=pt(c.b);if(!p|
 const cables=()=>{$('sv').innerHTML=cabSvg()+'<path id="tmp" fill="none" stroke="#fff" stroke-dasharray="4"/>'};
 const dc=(n,r,s)=>{const c=cabAt(n.id,r.id,s);return c?`background:${FIBC[c.fc]||'#cfd3d8'}`:''};
 function nodeHtml(n){return `<div class="n${CM[n.id]?' m':''}" data-n="${n.id}" style="left:${n.x}px;top:${n.y}px;width:${nw(n)}px"><div class="h" style="background:${hc(n)}"><span class="g" title="Arrastrar">⠿</span><select data-f="type"><option${n.type==='Empalme'?' selected':''}>Empalme</option><option${n.type==='CTO'?' selected':''}>CTO</option></select><input class="${reE.test(n.code)||reC.test(n.code)?'':'bad'}" data-f="code" placeholder="código" value="${esc(n.code)}" style="width:${codeW(n)}px"><select data-f="modelo">${models(n).map(m=>`<option${m===n.modelo?' selected':''}>${m}</option>`).join('')}</select></div>`+
- n.rows.map(r=>`<div class="rw"><i class="d l" data-d="${n.id}|${r.id}|l" style="${dc(n,r,'l')}"></i><input data-r="${r.id}" data-s="l" placeholder="entrada" value="${esc(r.l)}" style="${cs(r.lc)}"><input data-r="${r.id}" data-s="r" placeholder="salida" value="${esc(r.r)}" style="${cs(r.rc)}"><i class="d r" data-d="${n.id}|${r.id}|r" style="${dc(n,r,'r')}"></i></div>`).join('')+
+ n.rows.map(r=>`<div class="rw"><i class="d l" data-d="${n.id}|${r.id}|l" style="${dc(n,r,'l')}"></i><input data-r="${r.id}" data-s="l" placeholder="entrada" value="${esc(r.l)}" style="${cst(r,'l')}"><input data-r="${r.id}" data-s="r" placeholder="salida" value="${esc(r.r)}" style="${cst(r,'r')}"><i class="d r" data-d="${n.id}|${r.id}|r" style="${dc(n,r,'r')}"></i></div>`).join('')+
  '<div class="f"><button data-a="+">+ fila</button><button data-a="-">− fila</button><button data-a="x">✕ elemento</button></div></div>'}
 function render(){CM=changeMap();$('w').innerHTML='<svg id="sv"></svg>'+S.nodes.map(nodeHtml).join('');cables();ap()}
 const ap=()=>$('w').style.transform=`translate(${V.x}px,${V.y}px) scale(${V.k})`;
@@ -168,11 +169,13 @@ W$.addEventListener('click',e=>{const c=e.target.closest('[data-c]');if(c){editC
  render();sv()});
 // paleta de color del texto de la celda activa
 $('tc').insertAdjacentHTML('beforeend',FIB.map(f=>`<i data-c="${f}" title="${f}" style="background:${FIBC[f]}"></i>`).join(''));
-['pointerdown','mousedown'].forEach(t=>$('tc').addEventListener(t,e=>{if(e.target.dataset.c!==undefined)e.preventDefault()}));
-$('tc').addEventListener('touchend',e=>{const c=e.target.dataset&&e.target.dataset.c;if(c===undefined)return;e.preventDefault();applyTc(c)},{passive:false});
-function markTc(){if(!foc)return;const n=gn(foc.n),r=n&&n.rows.find(x=>x.id===foc.r),v=r?r[foc.s+'c']||'':'';[...$('tc').querySelectorAll('[data-c]')].forEach(i=>i.style.outline=i.dataset.c===v?'3px solid #3d8bff':'')}
-$('tc').addEventListener('click',e=>{const c=e.target.dataset.c;if(c!==undefined)applyTc(c)});
-function applyTc(c){if(!foc)return;const n=gn(foc.n),r=n&&n.rows.find(x=>x.id===foc.r);if(!r)return;pu();r[foc.s+'c']=c;foc.el.style.cssText=cs(c);
+const tcHit=e=>e.target.dataset&&(e.target.dataset.c!==undefined||e.target.dataset.mode);
+['pointerdown','mousedown'].forEach(t=>$('tc').addEventListener(t,e=>{if(tcHit(e))e.preventDefault()}));
+function tcAct(t){if(t.dataset.mode){tcm=t.dataset.mode;[...$('tc').querySelectorAll('[data-mode]')].forEach(b=>b.classList.toggle('on',b.dataset.mode===tcm));markTc()}else if(t.dataset.c!==undefined)applyTc(t.dataset.c)}
+$('tc').addEventListener('touchend',e=>{if(!tcHit(e))return;e.preventDefault();tcAct(e.target)},{passive:false});
+function markTc(){if(!foc)return;const n=gn(foc.n),r=n&&n.rows.find(x=>x.id===foc.r),v=r?r[foc.s+tcm]||'':'';[...$('tc').querySelectorAll('[data-c]')].forEach(i=>i.style.outline=i.dataset.c===v?'3px solid #3d8bff':'')}
+$('tc').addEventListener('click',e=>{if(tcHit(e))tcAct(e.target)});
+function applyTc(c){if(!foc)return;const n=gn(foc.n),r=n&&n.rows.find(x=>x.id===foc.r);if(!r)return;pu();r[foc.s+tcm]=c;foc.el.style.cssText=cst(r,foc.s);
  const nd=foc.el.closest('.n');nd.style.width=nw(n)+'px';cables();sv();markTc();if(document.activeElement!==foc.el)foc.el.focus({preventScroll:true})}
 function editCable(id){const c=S.cables.find(x=>x.id===id),m=document.createElement('div');let fc=c.fc,tb=c.tubo||'';m.className='md';
  const pal=(k,v)=>FIB.map(f=>`<i data-${k}="${f}" title="${f}" style="background:${FIBC[f]}${v===f?';outline:3px solid #3d8bff':''}"></i>`).join('');
@@ -187,7 +190,7 @@ function editCable(id){const c=S.cables.find(x=>x.id===id),m=document.createElem
 const pa=c=>!c?'fill="#111"':c==='blanco'?'fill="#fff" stroke="#555" stroke-width="0.6" paint-order="stroke" font-weight="bold"':`fill="${FIBC[c]}" font-weight="bold"`;
 function svgEx(){const bx=S.nodes.map(n=>[n.x,n.y,n.x+nw(n),n.y+nh(n)]),x0=Math.min(...bx.map(b=>b[0]))-30,y0=Math.min(...bx.map(b=>b[1]))-30,w=Math.max(Math.max(...bx.map(b=>b[2]))+30-x0,920),h=Math.max(...bx.map(b=>b[3]))+84-y0;let o=cabSvg().replace(/<path class="hit"[^>]*>/g,'');
  S.nodes.forEach(n=>{const c=hc(n),W=nw(n);o+=`<rect x="${n.x}" y="${n.y}" width="${W}" height="${nh(n)}" rx="8" fill="#f4f7fb" stroke="${CM[n.id]?'#ff6d00':c}" stroke-width="${CM[n.id]?3:2}"/><rect x="${n.x}" y="${n.y}" width="${W}" height="${HD}" rx="8" fill="${c}"/><text x="${n.x+8}" y="${n.y+21}" fill="#fff" font-size="13" font-weight="bold" font-family="Arial">${esc(n.code)} · ${n.type==='CTO'?'CTO ':''}${esc(n.modelo)}</text>`;
-  n.rows.forEach((r,i)=>{const y=n.y+2+HD+i*RH;o+=`<line x1="${n.x}" x2="${n.x+W}" y1="${y}" y2="${y}" stroke="#ccd3de"/><line x1="${n.x+W/2}" x2="${n.x+W/2}" y1="${y}" y2="${y+RH}" stroke="#ccd3de"/><text x="${n.x+9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.lc)}>${esc(r.l)}</text><text x="${n.x+W-9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.rc)} text-anchor="end">${esc(r.r)}</text>`;
+  n.rows.forEach((r,i)=>{const y=n.y+2+HD+i*RH;o+=`<line x1="${n.x}" x2="${n.x+W}" y1="${y}" y2="${y}" stroke="#ccd3de"/>${['l','r'].map(s=>r[s+'b']?`<rect x="${s==='l'?n.x:n.x+W/2}" y="${y}" width="${W/2}" height="${RH}" fill="${FIBC[r[s+'b']]}" fill-opacity="${r[s+'b']==='blanco'?1:.33}"/>`:'').join('')}<line x1="${n.x+W/2}" x2="${n.x+W/2}" y1="${y}" y2="${y+RH}" stroke="#ccd3de"/><text x="${n.x+9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.lc)}>${esc(r.l)}</text><text x="${n.x+W-9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.rc)} text-anchor="end">${esc(r.r)}</text>`;
    ['l','r'].forEach(s=>{const k=cabAt(n.id,r.id,s);if(k)o+=`<circle cx="${n.x+(s==='r'?W:0)}" cy="${y+RH/2}" r="5" fill="${FIBC[k.fc]||'#cfd3d8'}" stroke="#333"/>`})})});
  o+=`<text x="${x0+30}" y="${y0+h-38}" font-size="11" font-family="Arial" fill="#445">Cables:</text>`+Object.keys(FC).map((k,i)=>`<rect x="${x0+80+i*92}" y="${y0+h-46}" width="22" height="8" rx="3" fill="${FC[k][1]}" stroke="#8a8f98"/><text x="${x0+106+i*92}" y="${y0+h-38}" font-size="11" font-family="Arial" fill="#445">${k}</text>`).join('');
  const used=[...new Set(S.nodes.map(n=>(n.type==='CTO'?'CTO ':'')+n.modelo))];
@@ -204,7 +207,7 @@ async function pdf(){
  d.addPage();d.setFontSize(13);d.text('Carta de elementos: entradas, salidas y conexiones',14,14);let yy=20;
  S.nodes.slice().sort((a,b)=>a.x-b.x||a.y-b.y).forEach(n=>{if(yy>165){d.addPage();yy=14}
   d.autoTable({startY:yy,head:[[{content:`${n.code||'(sin código)'} · ${n.type==='CTO'?'CTO ':''}${n.modelo}`,colSpan:4,styles:{fillColor:rgb(hc(n))}}],['Entrada','Viene de','Salida','Va a']],body:n.rows.map(r=>[r.l,peer(n,r,'l'),r.r,peer(n,r,'r')]),styles:{fontSize:8},margin:{left:14,right:14},
-   didParseCell:q=>{if(q.section!=='body'||(q.column.index!==0&&q.column.index!==2))return;const r=n.rows[q.row.index],col=r&&(q.column.index===0?r.lc:r.rc);if(col){q.cell.styles.textColor=col==='blanco'?[120,120,120]:rgb(FIBC[col]);q.cell.styles.fontStyle='bold'}}});yy=d.lastAutoTable.finalY+7});
+   didParseCell:q=>{if(q.section!=='body'||(q.column.index!==0&&q.column.index!==2))return;const r=n.rows[q.row.index],col=r&&(q.column.index===0?r.lc:r.rc),bg=r&&(q.column.index===0?r.lb:r.rb);if(bg)q.cell.styles.fillColor=rgb(FIBC[bg]).map(v=>bg==='blanco'?v:Math.round(255-(255-v)*.33));if(col){q.cell.styles.textColor=col==='blanco'?[120,120,120]:rgb(FIBC[col]);q.cell.styles.fontStyle='bold'}}});yy=d.lastAutoTable.finalY+7});
  {const CH=diff();d.addPage();d.setFontSize(13);d.text('Hoja de modificaciones respecto a la carta original',14,14);d.setFontSize(9);
   d.text(`PON: ${S.pon||'-'}   Árbol: ${S.arbol||'-'}   Fusionador: ${S.fus||'-'}   Revisión: ${S.rev||'-'}   Original fijada: ${S.baseDate||'-'}   Fecha: ${S.date||''}`,14,20);let fy=32;
   if(!S.base)d.text('No hay carta original fijada: no se pueden calcular modificaciones.',14,28);
