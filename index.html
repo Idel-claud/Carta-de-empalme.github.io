@@ -37,11 +37,24 @@ header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;b
 .k-n{background:#fff59d;color:#222;border-radius:3px;box-shadow:2px 3px 8px #0006}.k-n textarea::placeholder{color:#8a7d2a}
 .k-g{background:var(--pn);border:1px solid var(--bd);border-radius:6px;padding:6px 9px;font-size:12px;color:var(--tx)}.k-g b{display:block;margin-bottom:4px}.k-g div{display:flex;align-items:center;gap:6px;height:18px}.k-g i{display:inline-block;flex:0 0 auto}
 .an .rz{position:absolute;right:-7px;bottom:-7px;width:16px;height:16px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 50%,var(--ac) 50%);border-radius:0 0 5px 0}
+#ref{background:var(--pn);border-bottom:1px solid var(--bd);padding:4px 10px}
+#ref .strip{display:flex;align-items:center;gap:6px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
+#ref .strip>b{font-size:12px;color:var(--mu);font-weight:600;margin-right:2px}
+.fc{display:inline-flex;align-items:center;gap:3px;font-size:12px;flex:0 0 auto}.fc i{width:22px;height:16px;border-radius:3px;border:1px solid #0004;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;font-weight:700;position:relative}
+.fc i.ring{align-items:flex-start;line-height:12px;height:18px}.fc i.ring::after{content:'';position:absolute;left:0;right:0;bottom:2px;height:2px;background:#000}
+#ref .strip button{flex:0 0 auto;padding:3px 8px;font-size:12px}#fcs{display:inline-flex;gap:10px;flex:0 0 auto}
+#refp{display:none;padding:8px 0 4px;gap:18px;flex-wrap:wrap;align-items:flex-start}#refp.on{display:flex;max-height:60vh;overflow:auto}
+#refp h4{margin:0 0 6px;font-size:13px}#refp .blk{flex:0 1 auto;min-width:260px}
+#refp table{border-collapse:collapse;font-size:12px}#refp td,#refp th{border:1px solid var(--bd);padding:2px 7px;text-align:center}#refp th{background:var(--bg);font-weight:600}
+.s1{color:#ff5252;font-weight:700}.s3{color:#2ebd5a;font-weight:700}.s2{color:#4a90ff;font-weight:700}
+#refp .grid{display:flex;flex-wrap:wrap;gap:4px 10px;max-width:520px}#refp .note{font-size:11px;color:var(--mu);margin-top:4px;max-width:520px}
+#refp input{width:70px;padding:2px 5px}
 </style></head><body>
 <header><b>📡 Cartas de empalme</b><button onclick="addNode('Empalme')">+ Empalme</button><button onclick="addNode('CTO')">+ CTO</button><button onclick="undo()">↶</button><button onclick="redo()">↷</button><button onclick="zoom(1.25)">＋</button><button onclick="zoom(.8)">－</button><button onclick="fit()">Ajustar</button>
 <button id="bm" onclick="$('meta').classList.toggle('on');setTimeout(fit,50)">Datos ▾</button><button id="bt" onclick="$('tools').classList.toggle('on')">✎ Anotar ▾</button><button id="bch" onclick="showCh()" hidden>Cambios</button><button id="bth" onclick="setTheme(TH[(TH.indexOf(th)+1)%3])" title="Modo claro / oscuro">🌓 Auto</button>
 <button onclick="saveJ()">Guardar JSON</button><button onclick="$('fj').click()">Cargar JSON</button><button onclick="if(confirm('¿Cargar el ejemplo? Se pierde el trabajo actual.'))load(example())">Ejemplo</button>
 <button id="inst" class="p" hidden>⬇ Instalar</button><button class="p" onclick="pdf()">Exportar PDF</button><input id="fj" type="file" accept=".json" hidden onchange="rd(this)"></header>
+<div id="ref"><div class="strip"><button id="brf" onclick="$('refp').classList.toggle('on');this.textContent=$('refp').classList.contains('on')?'Ocultar ▴':'Divisores y más ▾'">Divisores y más ▾</button><b>Código DIGI</b><span id="fcs"></span></div><div id="refp"></div></div>
 <div id="tools"><span>Anotar:</span><button onclick="addAnn('t')">T Texto</button><button onclick="addAnn('b')">▭ Cuadro de texto</button><button onclick="addAnn('n')">🗒 Nota</button><button onclick="addAnn('a')">➜ Flecha</button><button onclick="addAnn('l')">╱ Línea</button><button onclick="addAnn('g')">▦ Leyenda</button></div>
 <div id="meta"><input data-m="title" placeholder="Título"><input data-m="pon" placeholder="PON (ALCOBENDASA1.1)"><input data-m="arbol" placeholder="Árbol"><input data-m="zone" placeholder="Zona / esquema"><input data-m="fus" placeholder="Fusionador"><input data-m="rev" placeholder="Revisión"><input data-m="date" placeholder="Fecha"></div>
 <div id="cv"><div id="w"></div></div>
@@ -51,7 +64,7 @@ const $=i=>document.getElementById(i),esc=s=>String(s??'').replace(/[&<>"]/g,c=>
 const HD=32,RH=28,CABLES=['12Fo','24Fo','48Fo','96Fo','144Fo','192Fo','288Fo','512Fo','576Fo'];
 const FC={'12Fo':['azul','#1e66d0'],'24Fo':['verde','#43a047'],'48Fo':['rojo','#e53935'],'96Fo':['amarillo','#f2c200'],'144Fo':['naranja','#fb8c00'],'192Fo':['marrón','#795548'],'288Fo':['blanco','#cfd3d8'],'512Fo':['gris','#8a8f98'],'576Fo':['violeta','#8e24aa']};
 const FIB=['rojo','verde','amarillo','azul','naranja','marrón','blanco','violeta','rosa','turquesa','gris','negro'];
-const FIBC={rojo:'#e53935',verde:'#43a047',amarillo:'#f2c200',azul:'#1e66d0',naranja:'#fb8c00','marrón':'#8d4b1f',blanco:'#eee',violeta:'#8e24aa',rosa:'#f48fb1',turquesa:'#1fb5ad',gris:'#9e9e9e',negro:'#222'};
+const FIBC={rojo:'#e53935',verde:'#43a047',amarillo:'#f2c200',azul:'#1e66d0',naranja:'#fb8c00','marrón':'#8d4b1f',blanco:'#eee',violeta:'#8e24aa',rosa:'#f48fb1',turquesa:'#22b8e8',gris:'#9e9e9e',negro:'#222'};
 const MOD={'HTSC 206':'#1e66d0','HTSC512':'#7b3fc4','Z24':'#0288d1','IP68 8P':'#3949ab','IP68 16P':'#c2185b'};
 const CTOM={'Y24':'#2e7d32','Z24':'#00897b','HTTB001':'#e65100','HTTB002':'#b8860b','MOD32':'#455a64','MOD48':'#827717','IP68 8P':'#b71c1c','IP68 16P':'#880e4f','Bandeja rack':'#424242'};
 const reE=/^(?:[A-Z]{3}\d{2,3}|\d{2})E\d{4}$/i,reC=/^\d{6}[A-Z]?$/i;
@@ -299,8 +312,24 @@ async function pdf(){
 const TH=['auto','dark','light'],THL={auto:'🌓 Auto',dark:'🌙 Oscuro',light:'☀️ Claro'};let th='auto';try{th=localStorage.getItem('cf-theme')||'auto'}catch(e){}
 function setTheme(t){th=TH.includes(t)?t:'auto';if(th==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.dataset.theme=th;$('bth').textContent=THL[th];try{localStorage.setItem('cf-theme',th)}catch(e){}}
 setTheme(th);
+// ---- referencia: código de colores DIGI y combinaciones de divisores
+const txc=c=>['amarillo','blanco','rosa','naranja','turquesa'].includes(c)?'#000':'#fff';
+const sw=(c,n,ring)=>`<span class="fc" title="${n}. ${cap1(c)}${ring?' con anillo negro':''}"><i class="${ring?'ring':''}" style="background:${FIBC[c]};color:${txc(c)}">${n}</i>${cap1(c)}</span>`;
+const SPL={4:[[0,16],[2,8],[4,4],[8,2]],6:[[0,12],[2,6],[3,4],[4,3],[6,2]],8:[[0,8],[2,4],[4,2]],12:[[0,6],[2,3],[3,2]],16:[[0,4],[2,2]]};
+function refRender(){ let rows='';Object.entries(SPL).forEach(([a,l])=>l.forEach(([b,c],i)=>{const N=a*(b||1)*c;
+  rows+=`<tr>${i?'':`<td rowspan="${l.length}" class="s1">1X${a}</td>`}<td class="s3">${b?'1X'+b:'–'}</td><td class="s2">1X${c}</td><td>1:${N}</td></tr>`}));
+ $('refp').innerHTML=`<div class="blk"><h4>Código de colores DIGI (fibras y tubos)</h4><div class="grid">${FIB.map((c,i)=>sw(c,i+1)).join('')}</div>
+ <div class="grid" style="margin-top:6px">${FIB.map((c,i)=>sw(i===11?'incoloro':c,i+13,true)).join('')}</div>
+ <div class="note">13–24: mismo color con anillo negro (la 24 es incolora o «natural»). 25–32 (cable de 512): rojo a violeta con doble anillo. Si falta un color en el tubo, se salta al siguiente.</div>
+ <h4 style="margin-top:10px">Configuración de cables DIGI</h4><table><tr><th>F.O</th>${[12,24,48,96,144,192,288,512,576].map(v=>`<th>${v}</th>`).join('')}</tr><tr><td>Nº tubos</td>${[1,2,4,8,12,8,12,'4+12',24].map(v=>`<td>${v}</td>`).join('')}</tr><tr><td>Fibras/tubo</td>${[12,12,12,12,12,24,24,32,24].map(v=>`<td>${v}</td>`).join('')}</tr></table>
+ <div class="note">512: 4 tubos en capa interna (núcleo) y 12 en capa externa.</div></div>
+ <div class="blk"><h4>Combinaciones de divisores <span class="s1">SN1</span> → <span class="s3">SN3</span> → <span class="s2">SN2</span></h4>
+ <table><tr><th class="s1">SN1</th><th class="s3">SN3</th><th class="s2">SN2</th><th>Total</th></tr>${rows}</table>
+ <div class="note">«–»: sin divisor de tercer nivel; el SN1 va directo al SN2.</div></div>`;}
+$('fcs').innerHTML=FIB.map((c,i)=>sw(c,i+1)).join('');
 //INIT
 try{const t=localStorage.getItem('cfusion');load(t?JSON.parse(t):example())}catch(e){load(example())}
+refRender();
 addEventListener('resize',()=>{const a=document.activeElement;if(a&&/INPUT|SELECT|TEXTAREA/.test(a.tagName))placeSoon();else fit()});
 let dp=null;addEventListener('beforeinstallprompt',e=>{e.preventDefault();dp=e;$('inst').hidden=false});
 $('inst').onclick=async()=>{if(!dp)return;dp.prompt();await dp.userChoice;dp=null;$('inst').hidden=true};
