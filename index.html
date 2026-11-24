@@ -4,9 +4,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-:root{--bg:#10141c;--pn:#182030;--tx:#e6ebf2;--mu:#8e9aae;--bd:#2c384c;--ac:#3d8bff;color-scheme:dark}
-:root[data-theme=light]{--bg:#eef1f6;--pn:#fff;--tx:#1c2430;--mu:#6a7686;--bd:#ccd3de;--ac:#1e66d0;color-scheme:light}
-@media(prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#eef1f6;--pn:#fff;--tx:#1c2430;--mu:#6a7686;--bd:#ccd3de;--ac:#1e66d0;color-scheme:light}}
+:root{--bg:#10141c;--pn:#182030;--tx:#e6ebf2;--mu:#8e9aae;--bd:#2c384c;--ac:#3d8bff;--zb:#283752;color-scheme:dark}
+:root[data-theme=light]{--bg:#eef1f6;--pn:#fff;--tx:#1c2430;--mu:#6a7686;--bd:#ccd3de;--ac:#1e66d0;--zb:#e8eef7;color-scheme:light}
+@media(prefers-color-scheme:light){:root:not([data-theme=dark]){--bg:#eef1f6;--pn:#fff;--tx:#1c2430;--mu:#6a7686;--bd:#ccd3de;--ac:#1e66d0;--zb:#e8eef7;color-scheme:light}}
 *{box-sizing:border-box}body{margin:0;font:13px system-ui,sans-serif;background:var(--bg);color:var(--tx);height:100vh;height:100dvh;display:flex;flex-direction:column}
 button,select,input{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:6px;padding:4px 7px}button{cursor:pointer}button:hover{border-color:var(--ac)}button.p{background:var(--ac);border-color:var(--ac);color:#fff}
 header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;background:var(--pn);border-bottom:1px solid var(--bd)}header b{margin-right:6px}
@@ -49,6 +49,7 @@ header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;b
 .s1{color:#ff5252;font-weight:700}.s3{color:#2ebd5a;font-weight:700}.s2{color:#4a90ff;font-weight:700}
 #refp .grid{display:flex;flex-wrap:wrap;gap:3px 10px}#refp .note{font-size:11px;color:var(--mu);margin-top:3px}
 #refp input{width:70px;padding:2px 5px}
+.n .rw:nth-child(odd of .rw){background:var(--zb)}
 </style></head><body>
 <header><b>📡 Cartas de empalme</b><button onclick="addNode('Empalme')">+ Empalme</button><button onclick="addNode('CTO')">+ CTO</button><button onclick="undo()">↶</button><button onclick="redo()">↷</button><button onclick="zoom(1.25)">＋</button><button onclick="zoom(.8)">－</button><button onclick="fit()">Ajustar</button>
 <button id="bm" onclick="$('meta').classList.toggle('on');setTimeout(fit,50)">Datos ▾</button><button id="bt" onclick="$('tools').classList.toggle('on')">✎ Anotar ▾</button><button id="bch" onclick="showCh()" hidden>Cambios</button><button id="bth" onclick="setTheme(TH[(TH.indexOf(th)+1)%3])" title="Modo claro / oscuro">🌓 Auto</button>
@@ -278,8 +279,8 @@ function editCable(id){const c=S.cables.find(x=>x.id===id),m=document.createElem
 // ---- PDF
 const pa=c=>!c?'fill="#111"':c==='blanco'?'fill="#fff" stroke="#555" stroke-width="0.6" paint-order="stroke" font-weight="bold"':`fill="${FIBC[c]}" font-weight="bold"`;
 function svgEx(){let bx=[...S.nodes.map(n=>[n.x,n.y,n.x+nw(n),n.y+nh(n)]),...S.notes.map(a=>{const g=annGeom(a);return [g.x0,g.y0,g.x1,g.y1]})];if(!bx.length)bx=[[0,0,300,100]];const x0=Math.min(...bx.map(b=>b[0]))-30,y0=Math.min(...bx.map(b=>b[1]))-30,w=Math.max(Math.max(...bx.map(b=>b[2]))+30-x0,920),h=Math.max(...bx.map(b=>b[3]))+84-y0;let o=cabSvg().replace(/<path class="hit"[^>]*>/g,'');
- S.nodes.forEach(n=>{const c=hc(n),W=nw(n);o+=`<rect x="${n.x}" y="${n.y}" width="${W}" height="${nh(n)}" rx="8" fill="#f4f7fb" stroke="${CM[n.id]?'#ff6d00':c}" stroke-width="${CM[n.id]?3:2}"/><rect x="${n.x}" y="${n.y}" width="${W}" height="${HD}" rx="8" fill="${c}"/><text x="${n.x+8}" y="${n.y+21}" fill="#fff" font-size="13" font-weight="bold" font-family="Arial">${esc(n.code)} · ${n.type==='CTO'?'CTO ':''}${esc(n.modelo)}</text>`;
-  n.rows.forEach((r,i)=>{const y=n.y+2+HD+i*RH;o+=`<line x1="${n.x}" x2="${n.x+W}" y1="${y}" y2="${y}" stroke="#ccd3de"/>${['l','r'].map(s=>r[s+'b']?`<rect x="${s==='l'?n.x:n.x+W/2}" y="${y}" width="${W/2}" height="${RH}" fill="${FIBC[r[s+'b']]}" fill-opacity="${r[s+'b']==='blanco'?1:.33}"/>`:'').join('')}<line x1="${n.x+W/2}" x2="${n.x+W/2}" y1="${y}" y2="${y+RH}" stroke="#ccd3de"/><text x="${n.x+9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.lc)}>${esc(r.l)}</text><text x="${n.x+W-9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.rc)} text-anchor="end">${esc(r.r)}</text>`;
+ S.nodes.forEach(n=>{const c=hc(n),W=nw(n);o+=`<rect x="${n.x}" y="${n.y}" width="${W}" height="${nh(n)}" rx="8" fill="#ffffff" stroke="${CM[n.id]?'#ff6d00':c}" stroke-width="${CM[n.id]?3:2}"/><rect x="${n.x}" y="${n.y}" width="${W}" height="${HD}" rx="8" fill="${c}"/><text x="${n.x+8}" y="${n.y+21}" fill="#fff" font-size="13" font-weight="bold" font-family="Arial">${esc(n.code)} · ${n.type==='CTO'?'CTO ':''}${esc(n.modelo)}</text>`;
+  n.rows.forEach((r,i)=>{const y=n.y+2+HD+i*RH;o+=`${i%2===0?`<rect x="${n.x+1}" y="${y}" width="${W-2}" height="${RH}" fill="#e3e9f3"/>`:''}<line x1="${n.x}" x2="${n.x+W}" y1="${y}" y2="${y}" stroke="#ccd3de"/>${['l','r'].map(s=>r[s+'b']?`<rect x="${s==='l'?n.x:n.x+W/2}" y="${y}" width="${W/2}" height="${RH}" fill="${FIBC[r[s+'b']]}" fill-opacity="${r[s+'b']==='blanco'?1:.33}"/>`:'').join('')}<line x1="${n.x+W/2}" x2="${n.x+W/2}" y1="${y}" y2="${y+RH}" stroke="#ccd3de"/><text x="${n.x+9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.lc)}>${esc(r.l)}</text><text x="${n.x+W-9}" y="${y+18}" font-size="12" font-family="Arial" ${pa(r.rc)} text-anchor="end">${esc(r.r)}</text>`;
    ['l','r'].forEach(s=>{const k=cabAt(n.id,r.id,s);if(k)o+=`<circle cx="${n.x+(s==='r'?W:0)}" cy="${y+RH/2}" r="5" fill="${FIBC[k.fc]||'#cfd3d8'}" stroke="#333"/>`})})});
  o+=annSvg()+arrSvg(true);
  o+=`<text x="${x0+30}" y="${y0+h-38}" font-size="11" font-family="Arial" fill="#445">Cables:</text>`+Object.keys(FC).map((k,i)=>`<rect x="${x0+80+i*92}" y="${y0+h-46}" width="22" height="8" rx="3" fill="${FC[k][1]}" stroke="#8a8f98"/><text x="${x0+106+i*92}" y="${y0+h-38}" font-size="11" font-family="Arial" fill="#445">${k}</text>`).join('');
@@ -296,7 +297,7 @@ async function pdf(){
  const k=Math.min(269/sx.w,165/sx.h);d.addImage(c.toDataURL('image/png'),'PNG',14,28,sx.w*k,sx.h*k);
  d.addPage();d.setFontSize(13);d.text('Carta de elementos: entradas, salidas y conexiones',14,14);let yy=20;
  S.nodes.slice().sort((a,b)=>a.x-b.x||a.y-b.y).forEach(n=>{if(yy>165){d.addPage();yy=14}
-  d.autoTable({startY:yy,head:[[{content:`${n.code||'(sin código)'} · ${n.type==='CTO'?'CTO ':''}${n.modelo}`,colSpan:4,styles:{fillColor:rgb(hc(n))}}],['Entrada','Viene de','Salida','Va a']],body:n.rows.map(r=>[r.l,peer(n,r,'l'),r.r,peer(n,r,'r')]),styles:{fontSize:8},margin:{left:14,right:14},
+  d.autoTable({startY:yy,alternateRowStyles:{fillColor:[232,238,247]},head:[[{content:`${n.code||'(sin código)'} · ${n.type==='CTO'?'CTO ':''}${n.modelo}`,colSpan:4,styles:{fillColor:rgb(hc(n))}}],['Entrada','Viene de','Salida','Va a']],body:n.rows.map(r=>[r.l,peer(n,r,'l'),r.r,peer(n,r,'r')]),styles:{fontSize:8},margin:{left:14,right:14},
    didParseCell:q=>{if(q.section!=='body'||(q.column.index!==0&&q.column.index!==2))return;const r=n.rows[q.row.index],col=r&&(q.column.index===0?r.lc:r.rc),bg=r&&(q.column.index===0?r.lb:r.rb);if(bg)q.cell.styles.fillColor=rgb(FIBC[bg]).map(v=>bg==='blanco'?v:Math.round(255-(255-v)*.33));if(col){q.cell.styles.textColor=col==='blanco'?[120,120,120]:rgb(FIBC[col]);q.cell.styles.fontStyle='bold'}}});yy=d.lastAutoTable.finalY+7});
  {const NT=S.notes.filter(a=>'tbn'.includes(a.k)&&String(a.text||'').trim());if(NT.length){d.addPage();d.setFontSize(13);d.text('Notas y anotaciones',14,14);
   d.autoTable({startY:20,head:[['Tipo','Texto']],body:NT.map(a=>[{t:'Texto',b:'Cuadro de texto',n:'Nota'}[a.k],a.text]),styles:{fontSize:9},columnStyles:{0:{cellWidth:35}},headStyles:{fillColor:[30,102,208]},margin:{left:14,right:14}})}}
