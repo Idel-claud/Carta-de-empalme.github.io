@@ -37,24 +37,24 @@ header{display:flex;flex-wrap:wrap;gap:5px;align-items:center;padding:6px 10px;b
 .k-n{background:#fff59d;color:#222;border-radius:3px;box-shadow:2px 3px 8px #0006}.k-n textarea::placeholder{color:#8a7d2a}
 .k-g{background:var(--pn);border:1px solid var(--bd);border-radius:6px;padding:6px 9px;font-size:12px;color:var(--tx)}.k-g b{display:block;margin-bottom:4px}.k-g div{display:flex;align-items:center;gap:6px;height:18px}.k-g i{display:inline-block;flex:0 0 auto}
 .an .rz{position:absolute;right:-7px;bottom:-7px;width:16px;height:16px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 50%,var(--ac) 50%);border-radius:0 0 5px 0}
-#ref{background:var(--pn);border-bottom:1px solid var(--bd);padding:4px 10px}
-#ref .strip{display:flex;align-items:center;gap:6px;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch;scrollbar-width:thin}
-#ref .strip>b{font-size:12px;color:var(--mu);font-weight:600;margin-right:2px}
 .fc{display:inline-flex;align-items:center;gap:3px;font-size:12px;flex:0 0 auto}.fc i{width:22px;height:16px;border-radius:3px;border:1px solid #0004;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:10px;font-weight:700;position:relative}
 .fc i.ring{align-items:flex-start;line-height:12px;height:18px}.fc i.ring::after{content:'';position:absolute;left:0;right:0;bottom:2px;height:2px;background:#000}
-#ref .strip button{flex:0 0 auto;padding:3px 8px;font-size:12px}#fcs{display:inline-flex;gap:10px;flex:0 0 auto}
-#refp{display:none;padding:8px 0 4px;gap:18px;flex-wrap:wrap;align-items:flex-start}#refp.on{display:flex;max-height:60vh;overflow:auto}
-#refp h4{margin:0 0 6px;font-size:13px}#refp .blk{flex:0 1 auto;min-width:260px}
-#refp table{border-collapse:collapse;font-size:12px}#refp td,#refp th{border:1px solid var(--bd);padding:2px 7px;text-align:center}#refp th{background:var(--bg);font-weight:600}
+#fcs{display:inline-flex;align-items:center;gap:8px;flex:0 1 auto;min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:thin;padding:2px 0}#fcs>b{font-size:12px;color:var(--mu);font-weight:600}#fcs .fc{flex:0 0 auto}
+@media(max-width:700px){#fcs{flex:1 1 100%;order:20}}
+#refp{position:fixed;top:0;right:0;height:100vh;height:100dvh;width:min(540px,94vw);background:var(--pn);border-left:1px solid var(--bd);box-shadow:-6px 0 24px #0006;z-index:7;transform:translateX(105%);transition:transform .22s ease;overflow:auto;padding:0 14px 16px;display:flex;flex-direction:column;gap:14px}
+#refp.on{transform:none}#refov{position:fixed;inset:0;background:#0005;z-index:6;display:none}#refov.on{display:block}
+#refp .top{position:sticky;top:0;background:var(--pn);display:flex;align-items:center;justify-content:space-between;padding:10px 0 6px;border-bottom:1px solid var(--bd);z-index:1}#refp .top b{font-size:14px}
+#refp h4{margin:0 0 5px;font-size:13px}#refp .blk{flex:0 1 auto;min-width:0}#refp .cmb span{display:inline-block;border:1px solid var(--bd);border-radius:5px;padding:0 5px;margin:1px 2px;white-space:nowrap}#refp .cmb{text-align:left}
+#refp table{border-collapse:collapse;font-size:12px}#refp td,#refp th{border:1px solid var(--bd);padding:2px 7px;text-align:center}@media(max-width:700px){#refp td,#refp th{padding:2px 4px}}#refp th{background:var(--bg);font-weight:600}
 .s1{color:#ff5252;font-weight:700}.s3{color:#2ebd5a;font-weight:700}.s2{color:#4a90ff;font-weight:700}
-#refp .grid{display:flex;flex-wrap:wrap;gap:4px 10px;max-width:520px}#refp .note{font-size:11px;color:var(--mu);margin-top:4px;max-width:520px}
+#refp .grid{display:flex;flex-wrap:wrap;gap:3px 10px}#refp .note{font-size:11px;color:var(--mu);margin-top:3px}
 #refp input{width:70px;padding:2px 5px}
 </style></head><body>
 <header><b>📡 Cartas de empalme</b><button onclick="addNode('Empalme')">+ Empalme</button><button onclick="addNode('CTO')">+ CTO</button><button onclick="undo()">↶</button><button onclick="redo()">↷</button><button onclick="zoom(1.25)">＋</button><button onclick="zoom(.8)">－</button><button onclick="fit()">Ajustar</button>
 <button id="bm" onclick="$('meta').classList.toggle('on');setTimeout(fit,50)">Datos ▾</button><button id="bt" onclick="$('tools').classList.toggle('on')">✎ Anotar ▾</button><button id="bch" onclick="showCh()" hidden>Cambios</button><button id="bth" onclick="setTheme(TH[(TH.indexOf(th)+1)%3])" title="Modo claro / oscuro">🌓 Auto</button>
 <button onclick="saveJ()">Guardar JSON</button><button onclick="$('fj').click()">Cargar JSON</button><button onclick="if(confirm('¿Cargar el ejemplo? Se pierde el trabajo actual.'))load(example())">Ejemplo</button>
-<button id="inst" class="p" hidden>⬇ Instalar</button><button class="p" onclick="pdf()">Exportar PDF</button><input id="fj" type="file" accept=".json" hidden onchange="rd(this)"></header>
-<div id="ref"><div class="strip"><button id="brf" onclick="$('refp').classList.toggle('on');this.textContent=$('refp').classList.contains('on')?'Ocultar ▴':'Divisores y más ▾'">Divisores y más ▾</button><b>Código DIGI</b><span id="fcs"></span></div><div id="refp"></div></div>
+<button id="inst" class="p" hidden>⬇ Instalar</button><button class="p" onclick="pdf()">Exportar PDF</button><button id="brf" onclick="refOpen(1)" title="Divisores, cables y código de colores">☰ Divisores y cables</button><span id="fcs"></span><input id="fj" type="file" accept=".json" hidden onchange="rd(this)"></header>
+<div id="refov" onclick="refOpen(0)"></div><div id="refp"></div>
 <div id="tools"><span>Anotar:</span><button onclick="addAnn('t')">T Texto</button><button onclick="addAnn('b')">▭ Cuadro de texto</button><button onclick="addAnn('n')">🗒 Nota</button><button onclick="addAnn('a')">➜ Flecha</button><button onclick="addAnn('l')">╱ Línea</button><button onclick="addAnn('g')">▦ Leyenda</button></div>
 <div id="meta"><input data-m="title" placeholder="Título"><input data-m="pon" placeholder="PON (ALCOBENDASA1.1)"><input data-m="arbol" placeholder="Árbol"><input data-m="zone" placeholder="Zona / esquema"><input data-m="fus" placeholder="Fusionador"><input data-m="rev" placeholder="Revisión"><input data-m="date" placeholder="Fecha"></div>
 <div id="cv"><div id="w"></div></div>
@@ -130,7 +130,7 @@ function showCh(){
 const pt=e=>{const n=gn(e.n),i=n?n.rows.findIndex(r=>r.id===e.r):-1;return i<0?null:{x:n.x+(e.s==='r'?nw(n):0),y:n.y+2+HD+i*RH+RH/2}};
 function tubeSpan(t){return `<tspan fill="${FIBC[t]||'#fff'}" font-weight="bold"${t==='negro'?' stroke="#fff" stroke-width="2.5" paint-order="stroke"':''}>${esc(cap1(t))}</tspan>`}
 function cabSvg(){let o='';S.cables.forEach(c=>{const p=pt(c.a),q=pt(c.b);if(!p||!q)return;const col=(FC[c.cap]||[0,'#8a8f98'])[1],dx=Math.max(50,Math.abs(q.x-p.x)/2),
- d=`M${p.x},${p.y} C${p.x+(c.a.s==='r'?dx:-dx)},${p.y} ${q.x+(c.b.s==='r'?dx:-dx)},${q.y} ${q.x},${q.y}`,mx=(p.x+q.x)/2,my=(p.y+q.y)/2,lab=(c.cap||'').replace('Fo','f'),tb=big(c)&&c.tubo?c.tubo:'',lw=Math.ceil(twf(lab+(tb?' tubo '+cap1(tb):''),11,1)*1.1+16);
+ d=`M${p.x},${p.y} C${p.x+(c.a.s==='r'?dx:-dx)},${p.y} ${q.x+(c.b.s==='r'?dx:-dx)},${q.y} ${q.x},${q.y}`,mx=(p.x+q.x)/2,my=(p.y+q.y)/2,lab=(c.cap||'').replace('Fo','f'),tb=big(c)&&c.tubo?c.tubo:'',lw=Math.ceil(Math.max(twf(lab+(tb?' tubo '+cap1(tb):''),11,1)*1.2+22,(lab.length+(tb?6+tb.length:0))*7.2+22));
  if(CM[c.id])o+=`<path d="${d}" fill="none" stroke="#ff6d00" stroke-width="8" opacity=".45"/>`;
  if(col==='#cfd3d8')o+=`<path d="${d}" fill="none" stroke="#8a8f98" stroke-width="5.5"/>`;
  o+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="3"/><path class="hit" data-c="${c.id}" d="${d}" fill="none" stroke="transparent" stroke-width="16"/><g transform="translate(${mx},${my})"><rect x="${-lw/2}" y="-9" width="${lw}" height="18" rx="4" fill="#10141c" stroke="${col}"/><text text-anchor="middle" y="4" font-size="11" font-family="Arial" fill="#fff">${lab}${tb?' tubo '+tubeSpan(tb):''}</text></g>`});return o}
@@ -235,14 +235,14 @@ cv.addEventListener('pointerup',pEnd);cv.addEventListener('pointercancel',pEnd);
 cv.addEventListener('wheel',e=>{e.preventDefault();const r=cv.getBoundingClientRect();zoomAt(V.k*(e.deltaY<0?1.12:.89),e.clientX-r.left,e.clientY-r.top)},{passive:false});
 // ---- edición de celdas y cabeceras
 const W$=$('w');
-function placeTc(){const t=$('tc');if(t.hidden)return;const vv=window.visualViewport,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0;
+function placeTc(){const t=$('tc');if(!t||t.hidden)return;const vv=window.visualViewport,vw=vv?vv.width:innerWidth,vh=vv?vv.height:innerHeight,ox=vv?vv.offsetLeft:0,oy=vv?vv.offsetTop:0;
  t.style.maxWidth=(vw-12)+'px';const w=Math.min(t.scrollWidth,vw-12),hh=t.offsetHeight;t.style.left=(ox+(vw-w)/2)+'px';t.style.top=(oy+vh-hh-8)+'px';
  if(foc&&foc.el&&document.activeElement===foc.el){const r=foc.el.getBoundingClientRect(),lim=oy+vh-hh-16,top=cv.getBoundingClientRect().top+4;
   if(r.bottom>lim){V.y-=r.bottom-lim;ap()}else if(r.top<top){V.y+=top-r.top;ap()}}}
 let tcT=0;const placeSoon=()=>{clearTimeout(tcT);placeTc();tcT=setTimeout(placeTc,350)};
 if(window.visualViewport){visualViewport.addEventListener('resize',placeSoon);visualViewport.addEventListener('scroll',placeTc)}
 W$.addEventListener('focusin',e=>{const t=e.target;typed=false;if(t.dataset.r){foc={n:t.closest('.n').dataset.n,r:t.dataset.r,s:t.dataset.s,el:t};$('tc').hidden=false;markTc();placeSoon()}});
-W$.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&a.dataset&&a.dataset.r)){$('tc').hidden=true;foc=null}},200));
+W$.addEventListener('focusout',()=>setTimeout(()=>{const a=document.activeElement;if(!(a&&a.dataset&&a.dataset.r)&&$('tc')){$('tc').hidden=true;foc=null}},200));
 W$.addEventListener('input',e=>{const t=e.target;if(t.dataset.at){const a=ga(t.dataset.at);if(!a)return;if(!typed){pu();typed=true}a.text=t.value;sizeAnn(t.closest('.an'),a);sv();return}const nd=t.closest('.n');if(!nd||t.tagName==='SELECT')return;const n=gn(nd.dataset.n);if(!typed){pu();typed=true}
  if(t.dataset.r)n.rows.find(r=>r.id===t.dataset.r)[t.dataset.s]=t.value;else if(t.dataset.f==='code'){n.code=t.value;t.style.width=codeW(n)+'px'}else return;
  nd.style.width=nw(n)+'px';cables();sv()});
@@ -316,17 +316,17 @@ setTheme(th);
 const txc=c=>['amarillo','blanco','rosa','naranja','turquesa'].includes(c)?'#000':'#fff';
 const sw=(c,n,ring)=>`<span class="fc" title="${n}. ${cap1(c)}${ring?' con anillo negro':''}"><i class="${ring?'ring':''}" style="background:${FIBC[c]};color:${txc(c)}">${n}</i>${cap1(c)}</span>`;
 const SPL={4:[[0,16],[2,8],[4,4],[8,2]],6:[[0,12],[2,6],[3,4],[4,3],[6,2]],8:[[0,8],[2,4],[4,2]],12:[[0,6],[2,3],[3,2]],16:[[0,4],[2,2]]};
-function refRender(){ let rows='';Object.entries(SPL).forEach(([a,l])=>l.forEach(([b,c],i)=>{const N=a*(b||1)*c;
-  rows+=`<tr>${i?'':`<td rowspan="${l.length}" class="s1">1X${a}</td>`}<td class="s3">${b?'1X'+b:'–'}</td><td class="s2">1X${c}</td><td>1:${N}</td></tr>`}));
- $('refp').innerHTML=`<div class="blk"><h4>Código de colores DIGI (fibras y tubos)</h4><div class="grid">${FIB.map((c,i)=>sw(c,i+1)).join('')}</div>
- <div class="grid" style="margin-top:6px">${FIB.map((c,i)=>sw(i===11?'incoloro':c,i+13,true)).join('')}</div>
- <div class="note">13–24: mismo color con anillo negro (la 24 es incolora o «natural»). 25–32 (cable de 512): rojo a violeta con doble anillo. Si falta un color en el tubo, se salta al siguiente.</div>
- <h4 style="margin-top:10px">Configuración de cables DIGI</h4><table><tr><th>F.O</th>${[12,24,48,96,144,192,288,512,576].map(v=>`<th>${v}</th>`).join('')}</tr><tr><td>Nº tubos</td>${[1,2,4,8,12,8,12,'4+12',24].map(v=>`<td>${v}</td>`).join('')}</tr><tr><td>Fibras/tubo</td>${[12,12,12,12,12,24,24,32,24].map(v=>`<td>${v}</td>`).join('')}</tr></table>
- <div class="note">512: 4 tubos en capa interna (núcleo) y 12 en capa externa.</div></div>
+function refRender(){
+ let rows='';Object.entries(SPL).forEach(([a,l])=>l.forEach(([b,c],i)=>{rows+=`<tr>${i?'':`<td rowspan="${l.length}" class="s1">1X${a}</td>`}<td class="s3">${b?'1X'+b:'–'}</td><td class="s2">1X${c}</td><td>1:${a*(b||1)*c}</td></tr>`}));
+ $('refp').innerHTML=`<div class="top"><b>Referencia DIGI</b><button onclick="refOpen(0)">✕ Cerrar</button></div>
+ <div class="blk"><h4>Código de colores DIGI (fibras y tubos)</h4><div class="grid">${FIB.map((c,i)=>sw(c,i+1)).join('')}</div>
+ <h4 style="margin-top:8px">Fibras 13–24: mismo color con anillo negro</h4><div class="grid">${FIB.map((c,i)=>sw(i===11?'incoloro':c,i+13,true)).join('')}</div><div class="note">La 24 es incolora o «natural». 25–32 (cable de 512): rojo a violeta con doble anillo. Si en un tubo falta un color, se salta al siguiente.</div></div>
+ <div class="blk"><h4>Configuración de cables DIGI <span style="font-weight:400;color:var(--mu)">(512: 4 tubos núcleo + 12 capa externa)</span></h4><div style="overflow-x:auto"><table><tr><th>F.O</th>${[12,24,48,96,144,192,288,512,576].map(v=>`<th>${v}</th>`).join('')}</tr><tr><td>Nº tubos</td>${[1,2,4,8,12,8,12,'4+12',24].map(v=>`<td>${v}</td>`).join('')}</tr><tr><td>Fibras/tubo</td>${[12,12,12,12,12,24,24,32,24].map(v=>`<td>${v}</td>`).join('')}</tr></table></div></div>
  <div class="blk"><h4>Combinaciones de divisores <span class="s1">SN1</span> → <span class="s3">SN3</span> → <span class="s2">SN2</span></h4>
- <table><tr><th class="s1">SN1</th><th class="s3">SN3</th><th class="s2">SN2</th><th>Total</th></tr>${rows}</table>
- <div class="note">«–»: sin divisor de tercer nivel; el SN1 va directo al SN2.</div></div>`;}
-$('fcs').innerHTML=FIB.map((c,i)=>sw(c,i+1)).join('');
+ <table><tr><th class="s1">SN1</th><th class="s3">SN3</th><th class="s2">SN2</th><th>Total</th></tr>${rows}</table><div class="note">«–»: sin divisor de tercer nivel; el SN1 va directo al SN2.</div></div>`}
+$('fcs').innerHTML='<b>Código DIGI</b>'+FIB.map((c,i)=>sw(c,i+1)).join('');
+function refOpen(o){$('refp').classList.toggle('on',!!o);$('refov').classList.toggle('on',!!o)}
+addEventListener('keydown',e=>{if(e.key==='Escape')refOpen(0)});
 //INIT
 try{const t=localStorage.getItem('cfusion');load(t?JSON.parse(t):example())}catch(e){load(example())}
 refRender();

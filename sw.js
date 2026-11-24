@@ -1,4 +1,4 @@
-const V='empalmes-v19';
+const V='empalmes-v22';
 const LOCAL=['./','index.html','manifest.webmanifest','icon-192.png','icon-512.png','icon-maskable-512.png'];
 const CDN=['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js','https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js'];
 self.addEventListener('install',e=>{e.waitUntil((async()=>{const c=await caches.open(V);
